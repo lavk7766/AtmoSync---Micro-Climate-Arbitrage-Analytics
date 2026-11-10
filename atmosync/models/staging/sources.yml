@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: raw
+    database: ATMOSYNC
+    schema: RAW
+    tables:
+      - name: raw_container_telemetry
+      - name: raw_commodity_prices
+      - name: product_spoilage_reference

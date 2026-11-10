@@ -1,0 +1,54 @@
+version: 2
+
+models:
+  - name: stg_container_telemetry
+    columns:
+      - name: event_id
+        tests:
+          - not_null
+          - unique
+      - name: container_id
+        tests:
+          - not_null
+      - name: event_ts
+        tests:
+          - not_null
+
+  - name: stg_commodity_prices
+    columns:
+      - name: market_name
+        tests:
+          - not_null
+      - name: price_per_kg
+        tests:
+          - not_null
+
+  - name: stg_product_spoilage_reference
+    columns:
+      - name: product_name
+        tests:
+          - not_null
+      - name: product_stage
+        tests:
+          - not_null
+      - name: recommended_temp_min_c
+        tests:
+          - not_null
+      - name: recommended_temp_max_c
+        tests:
+          - not_null
+      - name: best_temp_c
+        tests:
+          - not_null
+      - name: humidity_min_pct
+        tests:
+          - not_null
+      - name: humidity_max_pct
+        tests:
+          - not_null
+      - name: shelf_life_min_hours
+        tests:
+          - not_null
+      - name: shelf_life_max_hours
+        tests:
+          - not_null
