@@ -132,8 +132,21 @@ Relevance to AtmoSync: a reference for realistic temperature and humidity behavi
 - TP is constant in the first rows of 001_1D (2.594)
 - Full verification of all 123 files: scripts/profile_household_cold_chain.py, output in docs/design/household_file_profile.csv
 
-### 2.5 Pending
-Contents of Raw.zip and Preprocessed.zip in data/raw/sensor_data.
+### 2.5 Sensor dataset (data/raw/sensor_data)
+
+Verified from the file listing, overview.csv and the first lines of SENSOR01.CSV and SENSOR05.CSV:
+- Raw.zip: 9 files, SENSOR01.CSV to SENSOR09.CSV (about 1.0 to 5.1 MB each)
+- Format: semicolon-separated; dates DD.MM.YYYY; times HH:MM:SS; decimal point
+- SENSOR01.CSV header: Date;Time;Temperature (C);Humidity (%)
+- One reading every 5 seconds (for example 09:26:30, 09:26:35, 09:26:40)
+- SENSOR05.CSV has no header line (its first line is data), so the header presence differs between files and the loader must handle both cases
+- SENSOR01.CSV has 156,020 data rows; overview.csv lists a Length of 155,869 for SENSOR01, a difference of 151 rows still to be explained
+- First SENSOR01 readings: 21.4 C and 57.4 % humidity (probably before the sensor reached cold storage; to be verified)
+- Preprocessed.zip: 9 files named SENSORnn_preprocessed.csv (SENSOR03: 4.2 MB preprocessed versus 2.7 MB raw, possibly gaps filled; column layout to be inspected)
+
+Comparison with the household dataset: the sensor data has real calendar timestamps and a 5-second interval, which makes it the closest match to our IoT telemetry events. It has no location and no product name.
+
+Proposed role (decision for the Team Lead): replay source or calibration data for the simulator and alert thresholds, with source_type = real_replayed.
 
 ## 3. Snowflake Schema Plan and dbt Model Structure
 
