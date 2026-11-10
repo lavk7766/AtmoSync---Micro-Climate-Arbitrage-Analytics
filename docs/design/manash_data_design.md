@@ -139,10 +139,12 @@ Verified from the file listing, overview.csv and the first lines of SENSOR01.CSV
 - Format: semicolon-separated; dates DD.MM.YYYY; times HH:MM:SS; decimal point
 - SENSOR01.CSV header: Date;Time;Temperature (C);Humidity (%)
 - One reading every 5 seconds (for example 09:26:30, 09:26:35, 09:26:40)
-- SENSOR05.CSV has no header line (its first line is data), so the header presence differs between files and the loader must handle both cases
+- All 9 raw files start with the same header line (checked for every file)
 - SENSOR01.CSV has 156,020 data rows; overview.csv lists a Length of 155,869 for SENSOR01, a difference of 151 rows still to be explained
 - First SENSOR01 readings: 21.4 C and 57.4 % humidity (probably before the sensor reached cold storage; to be verified)
-- Preprocessed.zip: 9 files named SENSORnn_preprocessed.csv (SENSOR03: 4.2 MB preprocessed versus 2.7 MB raw, possibly gaps filled; column layout to be inspected)
+- Preprocessed.zip: 9 files named SENSORnn_preprocessed.csv; header Date;Time;Temperature;Humidity (no units), values with one decimal (for example 21.2)
+- SENSOR01_preprocessed.csv starts at 02.09.2024 09:35:25 (the raw file starts at 09:26:30). SENSOR03_preprocessed.csv also starts at 09:35:25 but with empty Temperature and Humidity, which matches the "Missing Start" time of SENSOR03 in overview.csv.
+- Interpretation (to be verified with a script): the preprocessed files use a common start time and a complete 5-second time grid, with empty values where readings are missing. That would explain why SENSOR03 is 4.2 MB preprocessed versus 2.7 MB raw.
 
 Comparison with the household dataset: the sensor data has real calendar timestamps and a 5-second interval, which makes it the closest match to our IoT telemetry events. It has no location and no product name.
 
