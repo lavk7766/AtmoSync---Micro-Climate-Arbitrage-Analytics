@@ -1,26 +1,39 @@
 # Python
 __pycache__/
-*.pyc
+*.py[cod]
+*.egg-info/
 .venv/
 venv/
 
-# Secrets
+# Environment and credentials
 .env
+.env.*
+!.env.example
 *.pem
+*.key
+id_ed25519
+id_rsa
+
+# IDE and operating system
+.vscode/
+.idea/
+.DS_Store
+
+# Generated data
+data/interim/
+data/processed/
+data/raw/household_cold_chain/unzipped/
+data/raw/sensor_data/pre_unzipped/
+data/raw/sensor_data/raw_unzipped/
 
 # Logs and test output
+*.log
 logs/
 
-# dbt build output
+# dbt build output (current folder, and the folder it will move to)
 atmosync/target/
 atmosync/dbt_packages/
 atmosync/logs/
-
-# Data
-data/raw/*
-data/processed/*
-
-# Mac / IDE
-.DS_Store
-.vscode/
-.idea/
+dbt/target/
+dbt/dbt_packages/
+dbt/logs/
