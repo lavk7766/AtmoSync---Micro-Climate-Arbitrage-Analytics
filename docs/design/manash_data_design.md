@@ -96,17 +96,124 @@ Banana is available for two markets (Europe and US), which can serve as two cand
 
 Data-quality needs: an outlier rule for temperatures above about 25 C, handling of the recorded gaps, and alignment of sensors that start or end at different times.
 
-### 2.3 Pending
-Column structure, delimiter, units, sampling interval, date range per file, meaning of the 1D / 2DT / 2DB suffixes and missing-value codes of the household files; contents of Raw.zip and Preprocessed.zip in sensor_data. To be taken from readme.txt and the data files.
+### 2.3 Household dataset structure (verified from readme.txt)
+- One file per refrigerator: 123 refrigerators; file name pattern <number>_<type>.txt
+- Types: 1D = single-door (41), 2DT = two-door with top freezer (77), 2DB = two-door with bottom freezer (5)
+- Format: tab-delimited text, 5-minute time step; 5 days of data per refrigerator, selected from 7 recorded days after the stabilization period
+- Sensors: TagPlus TH loggers (Freshliance). Temperature resolution 0.1 C, range -30 to +70 C, expanded uncertainty +/-0.5 C. Relative humidity resolution 0.1 %, expanded uncertainty +/-3 %.
+- Product temperature: a sensor in a meat-simulating gel (hydroxyethyl cellulose, distilled water, antifungal agent)
+
+| Column | Meaning |
+|---|---|
+| Time | Minutes elapsed since the start of the recording (no calendar timestamp) |
+| T_AMB, RH_AMB | Ambient air outside the refrigerator |
+| T_MS, RH_MS | Middle shelf |
+| T_TS, RH_TS | Top shelf |
+| T_VD, RH_VD | Vegetable drawer |
+| T_DS, RH_DS | Door shelf |
+| T_FC, RH_FC | Freezer compartment or coldest zone |
+| TP | Product temperature (gel) |
+
+Data-quality needs:
+- Time is elapsed minutes, so a documented start date is needed before any join with container telemetry.
+- Sensor columns are wide and must be unpivoted per position (one row per refrigerator, time, position and measure).
+- Not every refrigerator has every compartment, so NULL handling is needed (to be confirmed from the data files).
+- Humidity uncertainty (+/-3 %) is larger than temperature uncertainty (+/-0.5 C).
+
+Relevance to AtmoSync: a reference for realistic temperature and humidity behaviour (stable periods, door-opening spikes, compartment differences) when calibrating the IoT simulator and the alert thresholds. It is not shipment data: it has no location or product name.
+
+### 2.4 Verified file structure (samples 001_1D.txt and 002_2DT.txt)
+- Data files are in the 01_src subfolder of the archive
+- Header (14 columns, tab-separated): Time, T_AMB, T_MS, T_TS, T_VD, T_DS, T_FC, RH_AMB, RH_MS, RH_TS, RH_VD, RH_DS, RH_FC, TP
+- Time starts at 0 and increases by 5 minutes per row
+- 001_1D.txt: 1,469 data rows (about 5.1 days)
+- Files per type match the readme: 1D = 41, 2DT = 77, 2DB = 5
+- Freezer values differ by type: about -21 C in the first rows of 001_1D and about -5 C in 002_2DT
+- TP is constant in the first rows of 001_1D (2.594)
+- Full verification of all 123 files: scripts/profile_household_cold_chain.py, output in docs/design/household_file_profile.csv
+
+### 2.5 Pending
+Contents of Raw.zip and Preprocessed.zip in data/raw/sensor_data.
 
 ## 3. Snowflake Schema Plan and dbt Model Structure
-Provisional (commodity prices only; final version after Section 2):
 
-| Layer | Object | Purpose |
+### 3.1 Database, warehouse and schemas
+Database ATMOSYNC, warehouse ATMOSYNC_WH (X-Small, auto-suspend 60 s).
+
+| Schema | Purpose | Written by |
 |---|---|---|
-| Raw | RAW_COMMODITY_PRICE_MONTHLY (price_month, commodity, unit, price, source_file, loaded_at) | Long format, loaded by a script |
-| Staging | stg_commodity_price_monthly | Clean names, date type, NULL handling |
-| Intermediate | int_fruit_prices | Banana (Europe, US) and Orange in $/kg |
-| Mart | To be defined in Week 3 | Joins prices with spoilage reference and telemetry |
+| RAW | Source data as received, one table per source | Loader scripts |
+| STAGING | One cleaned and typed model per raw table | dbt (views) |
+| INTERMEDIATE | Reshaping and joins (new schema) | dbt (views) |
+| MARTS | Business-ready tables for Superset | dbt (tables) |
 
-Planned dbt tests: price_month not null, commodity not null, unit not null, price not negative, and one row per commodity and month.
+Roles: ATMOSYNC_LOADER writes to RAW only; ATMOSYNC_READER reads RAW, STAGING, INTERMEDIATE and MARTS.
+
+### 3.2 Raw tables
+Existing: RAW_CONTAINER_TELEMETRY (JSON payload), PRODUCT_SPOILAGE_REFERENCE (20 rows), RAW_CONTAINER_METADATA, RAW_MARKET_PRICES, RAW_ROUTE_INFO, RAW_COMMODITY_PRICES (early sample table, to be retired once monthly prices are loaded).
+
+New (script snowflake/08_commodity_and_fridge_raw_tables.sql):
+
+| Table | Grain | Columns |
+|---|---|---|
+| RAW_COMMODITY_PRICE_MONTHLY | One row per commodity and month (long format) | price_month, commodity, unit, price, source_file, loaded_at |
+| RAW_HOUSEHOLD_FRIDGE_READINGS | One row per refrigerator and 5-minute reading | fridge_number, fridge_type, time_minutes, t_amb, t_ms, t_ts, t_vd, t_ds, t_fc, rh_amb, rh_ms, rh_ts, rh_vd, rh_ds, rh_fc, tp, source_file, loaded_at |
+
+Design choices:
+- The commodity workbook is unpivoted before loading (71 series x 802 months, about 57,000 rows).
+- The household table mirrors the source files (wide) in RAW, about 180,000 rows, and is unpivoted in dbt.
+- Both tables are reloaded in full on each run, so loaders need DELETE on them.
+- The sensor dataset (data/raw/sensor_data) is added after its zip files are inspected.
+
+### 3.3 dbt models
+**Staging (views)**
+| Model | Source | Work done |
+|---|---|---|
+| stg_container_telemetry | RAW_CONTAINER_TELEMETRY | Exists: JSON parsed, deduplicated by event_id |
+| stg_product_spoilage_reference | PRODUCT_SPOILAGE_REFERENCE | Exists: names lowercased and trimmed |
+| stg_commodity_price_monthly | RAW_COMMODITY_PRICE_MONTHLY | Lowercase names, NULL prices removed, month as date |
+| stg_household_fridge_readings | RAW_HOUSEHOLD_FRIDGE_READINGS | Decode fridge type (1D = single_door, 2DT = two_door_top_freezer, 2DB = two_door_bottom_freezer), typed columns |
+
+**Intermediate (views)**
+| Model | Purpose |
+|---|---|
+| int_fridge_readings_long | Unpivot to one row per fridge, time, position (ambient, middle shelf, top shelf, vegetable drawer, door shelf, freezer) with temperature_c and humidity_pct |
+| int_fruit_prices | Banana (Europe, US) and Orange in $/kg, through a seed that maps each spoilage-reference product to a price series |
+| int_product_price_coverage | For each of the 20 reference products: whether a price exists, the series and the latest price |
+
+**Marts (tables)**
+| Model | Purpose |
+|---|---|
+| mart_container_latest | Exists: latest reading per container |
+| mart_fridge_temperature_profile | Mean, minimum, maximum and 95th percentile of temperature and humidity per fridge type and position, used to calibrate simulator and alert thresholds |
+| mart_fruit_price_monthly | Monthly price, month-over-month change and the banana Europe versus US spread |
+| mart_spoilage_risk (Week 3) | Telemetry joined to the spoilage reference: time-to-spoilage per container |
+| mart_arbitrage (Week 3) | Spoilage risk joined to prices and routes: recommended reroute |
+
+Seed: seeds/product_price_series_map.csv (product_name, price_series, unit).
+
+### 3.4 dbt tests
+- Commodity prices: price_month, commodity, unit not null; price not negative; unique per commodity and month
+- Household readings: fridge_number and time_minutes not null; unique per fridge and time; fridge_type in (1D, 2DT, 2DB); relative humidity between 0 and 100; temperatures between -30 and +70 C (sensor range)
+- Product price map: every product exists in stg_product_spoilage_reference
+- Coverage: a warning (not an error) for reference products without a price
+
+### 3.5 Data-cleaning requirements
+| Dataset | Requirement |
+|---|---|
+| Commodity prices | Unpivot; parse month text (1960M01); replace placeholders and blanks with NULL; strip footnote marks and spaces; lowercase names; keep the unit as a column; do not mix units |
+| Household fridge files | Read tab-separated files; strip spaces; add fridge number and type from the file name; Time is elapsed minutes (no calendar date), so it is not joined by date; handle missing compartments as NULL; flag values outside the sensor range |
+| Both | Record the source file name and load time; fully reload instead of appending, so a re-run never duplicates rows |
+
+### 3.6 Implementation order
+1. Create the new raw tables and schema (snowflake/08 script)
+2. Commodity loader and staging model with tests
+3. Household loader and staging model with tests
+4. Intermediate models and the product price map seed
+5. Marts, then the Week 3 spoilage and arbitrage models
+
+### 3.7 Decisions needed from the Team Lead
+1. Prices for the 18 products that are not in the price file (second source, synthetic prices marked as assumed, or limit the demo to banana and orange).
+2. Role of the household data: calibration of the simulator and alert thresholds only (proposed), since it has no location, product or calendar time.
+3. Role of the sensor dataset (pending inspection).
+4. Whether the dbt project moves into the repo's dbt/ folder, so only one project exists.
