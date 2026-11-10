@@ -2,7 +2,7 @@
 
 Author: Manash Mandal (Snowflake, dbt and SQL)
 Date: 10 November 2026
-Status: Section 1 complete. Sections 2 and 3 pending (cold-chain and sensor data inspection).
+Status: Section 1 complete. Section 2 partly complete (inventory and sensor overview). Section 3 pending.
 
 ## 1. Commodity Price Dataset
 
@@ -72,8 +72,32 @@ Banana is available for two markets (Europe and US), which can serve as two cand
 1. Prices for the 18 uncovered products: add a second public source, generate synthetic prices marked as assumed, or limit the demonstration to banana and orange.
 2. The data is monthly and global, so arbitrage margins will be indicative, not real-time.
 
-## 2. Household Cold-Chain Dataset
-Pending: inspection in progress.
+## 2. Household Cold-Chain and Sensor Datasets
+
+### 2.1 Household cold-chain archive (inventory verified from the file listing)
+- Archive: data/raw/household_cold_chain/dataverse_files.zip (13.6 MB); the file name indicates a Dataverse download
+- 123 data files named NNN_<type>.txt (001 to 123), each about 97 to 103 KB; type suffixes seen: 1D, 2DT, 2DB
+- 246 PNG charts: one temperature (_TEMP) and one humidity (_HUM) chart per data file
+- Supporting files: readme.txt, MANIFEST.TXT, script_fridge.R, Fig1.png, Fig2.jpg
+- Likely content: household refrigerator temperature and humidity time series (suggested by the dataset name and script_fridge.R; to be confirmed from readme.txt)
+
+### 2.2 Sensor overview file (data/raw/sensor_data/overview.csv)
+| Item | Finding |
+|---|---|
+| Format | Semicolon-separated, transposed (one row per property, one column per sensor) |
+| Sensors | 9 (SENSOR01 to SENSOR09) |
+| Period | 2024-09-02 to 2024-09-11 |
+| Sampling | About one reading every 5 seconds (derived from Length and the time span) |
+| Late starts | SENSOR05 and SENSOR09 start on 2024-09-09 |
+| Early end | SENSOR04 ends at 2024-09-11 03:32, about 8 hours before the others |
+| Gaps | Recorded for SENSOR01, 03, 04, 05 and 09 |
+| Temperature range | 5.3 to 42.2 C (SENSOR01) and 5.8 to 38.7 C (SENSOR02); the other sensors peak at about 12 to 23 C |
+| Humidity | Not part of overview.csv |
+
+Data-quality needs: an outlier rule for temperatures above about 25 C, handling of the recorded gaps, and alignment of sensors that start or end at different times.
+
+### 2.3 Pending
+Column structure, delimiter, units, sampling interval, date range per file, meaning of the 1D / 2DT / 2DB suffixes and missing-value codes of the household files; contents of Raw.zip and Preprocessed.zip in sensor_data. To be taken from readme.txt and the data files.
 
 ## 3. Snowflake Schema Plan and dbt Model Structure
 Provisional (commodity prices only; final version after Section 2):
