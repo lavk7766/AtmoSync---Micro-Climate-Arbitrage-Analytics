@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Environment and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+id_ed25519
+id_rsa
+
+# IDE and operating system
+.vscode/
+.DS_Store
+
+# Generated data
+data/interim/
+data/processed/
+
+# Logs
+*.log
