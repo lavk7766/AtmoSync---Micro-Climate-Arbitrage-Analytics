@@ -31,9 +31,6 @@ data/raw/sensor_data/raw_unzipped/
 logs/
 
 # dbt build output (current folder, and the folder it will move to)
-atmosync/target/
-atmosync/dbt_packages/
-atmosync/logs/
 dbt/target/
 dbt/dbt_packages/
 dbt/logs/
