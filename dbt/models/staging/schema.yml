@@ -67,3 +67,15 @@ models:
       - name: price
         tests:
           - not_null
+          
+  - name: stg_household_fridge_readings
+    columns:
+      - name: fridge_number
+        tests:
+          - not_null
+      - name: fridge_type
+        tests:
+          - not_null
+      - name: time_minutes
+        tests:
+          - not_null

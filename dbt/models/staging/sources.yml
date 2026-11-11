@@ -9,3 +9,4 @@ sources:
       - name: raw_commodity_prices
       - name: product_spoilage_reference
       - name: raw_commodity_price_monthly
+      - name: raw_household_fridge_readings
