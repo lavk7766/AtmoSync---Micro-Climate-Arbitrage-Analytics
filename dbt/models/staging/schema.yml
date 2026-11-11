@@ -79,3 +79,16 @@ models:
       - name: time_minutes
         tests:
           - not_null
+          
+  - name: int_commodity_price_latest
+    columns:
+      - name: commodity
+        tests:
+          - not_null
+          - unique
+      - name: unit
+        tests:
+          - not_null
+      - name: latest_price_month
+        tests:
+          - not_null
