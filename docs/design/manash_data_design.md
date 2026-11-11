@@ -134,21 +134,60 @@ Relevance to AtmoSync: a reference for realistic temperature and humidity behavi
 
 ### 2.5 Sensor dataset (data/raw/sensor_data)
 
-Verified from the file listing, overview.csv and the first lines of SENSOR01.CSV and SENSOR05.CSV:
-- Raw.zip: 9 files, SENSOR01.CSV to SENSOR09.CSV (about 1.0 to 5.1 MB each)
-- Format: semicolon-separated; dates DD.MM.YYYY; times HH:MM:SS; decimal point
-- SENSOR01.CSV header: Date;Time;Temperature (C);Humidity (%)
-- One reading every 5 seconds (for example 09:26:30, 09:26:35, 09:26:40)
-- All 9 raw files start with the same header line (checked for every file)
-- SENSOR01.CSV has 156,020 data rows; overview.csv lists a Length of 155,869 for SENSOR01, a difference of 151 rows still to be explained
-- First SENSOR01 readings: 21.4 C and 57.4 % humidity (probably before the sensor reached cold storage; to be verified)
-- Preprocessed.zip: 9 files named SENSORnn_preprocessed.csv; header Date;Time;Temperature;Humidity (no units), values with one decimal (for example 21.2)
-- SENSOR01_preprocessed.csv starts at 02.09.2024 09:35:25 (the raw file starts at 09:26:30). SENSOR03_preprocessed.csv also starts at 09:35:25 but with empty Temperature and Humidity, which matches the "Missing Start" time of SENSOR03 in overview.csv.
-- Interpretation (to be verified with a script): the preprocessed files use a common start time and a complete 5-second time grid, with empty values where readings are missing. That would explain why SENSOR03 is 4.2 MB preprocessed versus 2.7 MB raw.
+Verified on 2026-11-11 with `scripts/profile_sensor_data.py`. The per-sensor results are in `docs/design/sensor_file_profile.csv`.
 
-Comparison with the household dataset: the sensor data has real calendar timestamps and a 5-second interval, which makes it the closest match to our IoT telemetry events. It has no location and no product name.
+**Files**
+- Raw.zip: 9 files, SENSOR01.CSV to SENSOR09.CSV
+- Preprocessed.zip: 9 files, SENSOR01_preprocessed.csv to SENSOR09_preprocessed.csv
+- overview.csv: one column per sensor with start, end, missing period, length and statistics
 
-Proposed role (decision for the Team Lead): replay source or calibration data for the simulator and alert thresholds, with source_type = real_replayed.
+**Format**
+- Semicolon-separated; dates DD.MM.YYYY; times HH:MM:SS; decimal point
+- Raw header (all 9 files): `Date;Time;Temperature (C);Humidity (%)`
+- Preprocessed header (all 9 files): `Date;Time;Temperature;Humidity` (no units)
+- Raw readings are 5 seconds apart. There are no duplicate timestamps in any file.
+
+**Repeated header lines.** Four lines inside the raw files are the header line again, not readings: SENSOR01 line 119,255 and SENSOR03 lines 4, 7 and 10. The cause is not known (possibly a logger restart or joined files). They hold no data, and the loader must skip them.
+
+**Readings per raw file and the common window.** The preprocessed files share one time window, 2024-09-02 09:35:25 to 2024-09-11 11:24:55, which is 156,835 time points. The `Length` column of overview.csv counts the raw readings that fall inside this window.
+
+| Sensor | Readings in raw file | Before window | After window | In window (= overview Length) |
+|---|---|---|---|---|
+| SENSOR01 | 156,019 | 107 | 43 | 155,869 |
+| SENSOR02 | 156,980 | 109 | 36 | 156,835 |
+| SENSOR03 | 84,450 | 6 | 0 | 84,444 |
+| SENSOR04 | 151,248 | 80 | 0 | 151,168 |
+| SENSOR05 | 31,146 | 0 | 45 | 31,101 |
+| SENSOR06 | 156,887 | 42 | 10 | 156,835 |
+| SENSOR07 | 156,885 | 23 | 27 | 156,835 |
+| SENSOR08 | 156,863 | 0 | 28 | 156,835 |
+| SENSOR09 | 32,717 | 0 | 17 | 32,700 |
+
+In total there are 1,083,195 readings in the raw files, 1,082,622 inside the window and 573 outside it. This closes the earlier question about SENSOR01: 156,020 lines minus 1 repeated header line minus 107 readings before and 43 after the window gives the overview Length of 155,869.
+
+**Gaps and late starts** (from the preprocessed files and overview.csv)
+
+| Sensor | Time points without a reading | Note |
+|---|---|---|
+| SENSOR01 | 966 | one gap of 4,835 seconds on 2024-09-09 |
+| SENSOR03 | 72,391 | no readings from the start of the window until 2024-09-06 14:07:55 |
+| SENSOR04 | 5,667 | stops on 2024-09-11 at 03:32:40 |
+| SENSOR05 | 125,734 | starts on 2024-09-09 at 16:13:15 |
+| SENSOR09 | 124,135 | starts on 2024-09-09 at 14:00:00 |
+| SENSOR02, 06, 07, 08 | 0 | complete |
+
+SENSOR03 has two steps that are not 5 seconds; the largest is 362,295 seconds (about 4.2 days).
+
+**Preprocessed files.** Every preprocessed file has exactly 156,835 rows on a complete 5-second grid. Where a sensor has no reading, both Temperature and Humidity are empty (no row has only one value missing). Every value in a preprocessed file also exists in the raw file at the same timestamp with the same value (0 values not found, 0 values different). The preprocessed files therefore contain no information that cannot be rebuilt from the raw files.
+
+**First readings.** SENSOR01, 02, 03, 04, 06, 07 and 08 start at 21.2 to 22.2 C and 56 to 68 % humidity. SENSOR05 starts at 13.1 C and SENSOR09 at 12.0 C, because both start later (2024-09-09). For SENSOR01, 02, 04, 06 and 07 the temperature first reaches 12 C or below after 44 to 65 minutes. This is consistent with a sensor being moved into cold storage, but the data alone does not prove it. SENSOR08 takes about 695 minutes and stays warmer than the others. For SENSOR03 the figure is not meaningful because of its gap. The 12 C value is only a screening threshold, not a safety threshold.
+
+**Comparison with the household dataset.** The sensor data has real calendar timestamps and a 5-second interval, which makes it the closest match to our IoT telemetry events. It has no location and no product name.
+
+**Proposed handling (to be agreed with the Team Lead)**
+- Role: replay source or calibration data for the simulator and alert thresholds, with `source_type = real_replayed`.
+- Loading: load the raw files only, one row per reading with the sensor name, and skip the repeated header lines. The window, gaps and cleaning are handled in dbt.
+
 
 ## 3. Snowflake Schema Plan and dbt Model Structure
 
