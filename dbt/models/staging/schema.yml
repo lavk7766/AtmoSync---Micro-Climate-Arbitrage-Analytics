@@ -52,3 +52,18 @@ models:
       - name: shelf_life_max_hours
         tests:
           - not_null
+       
+  - name: stg_commodity_price_monthly
+    columns:
+      - name: price_month
+        tests:
+          - not_null
+      - name: commodity
+        tests:
+          - not_null
+      - name: unit
+        tests:
+          - not_null
+      - name: price
+        tests:
+          - not_null
