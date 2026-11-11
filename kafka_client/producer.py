@@ -1,6 +1,6 @@
-import json
 
 from kafka import KafkaProducer
+from kafka.serializer import DefaultSerializer, JsonSerializer
 
 from kafka_client.kafka_config import (
     BOOTSTRAP_SERVERS,
@@ -15,8 +15,8 @@ class TelemetryProducer:
     def __init__(self):
         self.producer = KafkaProducer(
             bootstrap_servers=BOOTSTRAP_SERVERS,
-            value_serializer=lambda value: json.dumps(value).encode("utf-8"),
-            key_serializer=lambda key: key.encode("utf-8"),
+            value_serializer=JsonSerializer(),
+            key_serializer=DefaultSerializer(),
             acks=PRODUCER_ACKS,
             retries=PRODUCER_RETRIES,
         )
