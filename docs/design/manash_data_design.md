@@ -219,55 +219,57 @@ Design choices:
 - Both tables are reloaded in full on each run, so loaders need DELETE on them.
 - The sensor dataset (data/raw/sensor_data) is added after its zip files are inspected.
 
-### 3.3 dbt models
-**Staging (views)**
+### 3.3 dbt models (as built: 10 models and 1 seed)
+
+**Staging (views in STAGING)**
 | Model | Source | Work done |
 |---|---|---|
-| stg_container_telemetry | RAW_CONTAINER_TELEMETRY | Exists: JSON parsed, deduplicated by event_id |
-| stg_product_spoilage_reference | PRODUCT_SPOILAGE_REFERENCE | Exists: names lowercased and trimmed |
-| stg_commodity_price_monthly | RAW_COMMODITY_PRICE_MONTHLY | Lowercase names, NULL prices removed, month as date |
-| stg_household_fridge_readings | RAW_HOUSEHOLD_FRIDGE_READINGS | Decode fridge type (1D = single_door, 2DT = two_door_top_freezer, 2DB = two_door_bottom_freezer), typed columns |
+| stg_container_telemetry | RAW_CONTAINER_TELEMETRY | JSON parsed, deduplicated by event_id |
+| stg_product_spoilage_reference | PRODUCT_SPOILAGE_REFERENCE | Names lowercased and trimmed |
+| stg_commodity_prices | RAW_COMMODITY_PRICES | Early sample prices, to be retired |
+| stg_commodity_price_monthly | RAW_COMMODITY_PRICE_MONTHLY | Typed columns; price_per_kg filled only for $/kg and $/mt series |
+| stg_household_fridge_readings | RAW_HOUSEHOLD_FRIDGE_READINGS | Typed columns, fridge type decoded |
+| stg_sensor_readings | RAW_SENSOR_READINGS | Deduplicated by sensor and timestamp |
 
-**Intermediate (views)**
+**Intermediate (views in INTERMEDIATE)**
 | Model | Purpose |
 |---|---|
-| int_fridge_readings_long | Unpivot to one row per fridge, time, position (ambient, middle shelf, top shelf, vegetable drawer, door shelf, freezer) with temperature_c and humidity_pct |
-| int_fruit_prices | Banana (Europe, US) and Orange in $/kg, through a seed that maps each spoilage-reference product to a price series |
-| int_product_price_coverage | For each of the 20 reference products: whether a price exists, the series and the latest price |
+| int_commodity_price_latest | One row per price series with its latest month and price |
+| int_sensor_readings_common_window | Sensor readings between the latest sensor start and the earliest sensor end, computed from the data |
 
-**Marts (tables)**
+**Marts (tables in MARTS)**
 | Model | Purpose |
 |---|---|
-| mart_container_latest | Exists: latest reading per container |
-| mart_fridge_temperature_profile | Mean, minimum, maximum and 95th percentile of temperature and humidity per fridge type and position, used to calibrate simulator and alert thresholds |
-| mart_fruit_price_monthly | Monthly price, month-over-month change and the banana Europe versus US spread |
-| mart_spoilage_risk (Week 3) | Telemetry joined to the spoilage reference: time-to-spoilage per container |
-| mart_arbitrage (Week 3) | Spoilage risk joined to prices and routes: recommended reroute |
+| mart_container_latest | Latest reading per container |
+| mart_product_price_status | One row per spoilage-reference product and matched price series, with status direct_match, no_price_data or matched_not_convertible_to_per_kg |
 
-Seed: seeds/product_price_series_map.csv (product_name, price_series, unit).
+**Seed:** product_commodity_map (product to price series mapping)
 
-### 3.4 dbt tests
-- Commodity prices: price_month, commodity, unit not null; price not negative; unique per commodity and month
-- Household readings: fridge_number and time_minutes not null; unique per fridge and time; fridge_type in (1D, 2DT, 2DB); relative humidity between 0 and 100; temperatures between -30 and +70 C (sensor range)
-- Product price map: every product exists in stg_product_spoilage_reference
-- Coverage: a warning (not an error) for reference products without a price
+### 3.4 dbt tests (44, all passing)
+- 13 singular tests: commodity monthly uniqueness, household humidity range and reading uniqueness, telemetry humidity range, product map and price-status coverage, sensor humidity, temperature and uniqueness, and four spoilage-reference checks (temperature, humidity, shelf life, unique product)
+- 28 not-null tests across the staging models, int_commodity_price_latest and mart_product_price_status
+- 2 unique tests (telemetry event_id, commodity in int_commodity_price_latest)
+- 1 accepted-values test (price_status)
 
-### 3.5 Data-cleaning requirements
-| Dataset | Requirement |
+### 3.5 Data-cleaning rules in place
+| Dataset | Rule |
 |---|---|
-| Commodity prices | Unpivot; parse month text (1960M01); replace placeholders and blanks with NULL; strip footnote marks and spaces; lowercase names; keep the unit as a column; do not mix units |
-| Household fridge files | Read tab-separated files; strip spaces; add fridge number and type from the file name; Time is elapsed minutes (no calendar date), so it is not joined by date; handle missing compartments as NULL; flag values outside the sensor range |
-| Both | Record the source file name and load time; fully reload instead of appending, so a re-run never duplicates rows |
+| Commodity prices | Unpivoted by the loader; placeholders and blanks removed; footnote marks and spaces stripped; unit kept as a column; price_per_kg only for $/kg and $/mt series |
+| Household fridge files | Fully reloaded; fridge number and type taken from the file name; humidity range and uniqueness tested |
+| Sensor files | Repeated header lines inside the raw files skipped by the loader; deduplicated by sensor and timestamp; common window cut in dbt |
+| All loaders | Source file name and load time recorded; full reload, so a re-run never duplicates rows |
 
-### 3.6 Implementation order
-1. Create the new raw tables and schema (snowflake/08 script)
-2. Commodity loader and staging model with tests
-3. Household loader and staging model with tests
-4. Intermediate models and the product price map seed
-5. Marts, then the Week 3 spoilage and arbitrage models
+### 3.6 Status and next steps
+Built: everything listed in 3.3 and 3.4.
+Not built yet:
+- Container metadata, market price and route models (data dictionary sections 3 to 5; no source data yet)
+- GPS latitude and longitude tests on telemetry
+- mart_spoilage_risk and mart_arbitrage (Week 3)
+- Household temperature profile mart (to calibrate simulator thresholds)
+- dbt scheduling, Snowflake clustering or materialized views (Week 4)
 
-### 3.7 Decisions needed from the Team Lead
-1. Prices for the 18 products that are not in the price file (second source, synthetic prices marked as assumed, or limit the demo to banana and orange).
-2. Role of the household data: calibration of the simulator and alert thresholds only (proposed), since it has no location, product or calendar time.
-3. Role of the sensor dataset (pending inspection).
-4. Whether the dbt project moves into the repo's dbt/ folder, so only one project exists.
+### 3.7 Decisions
+Recorded in docs/dataset/data_decisions.md. Still open with the Team Lead:
+1. Which banana series is the primary price (Europe or US)
+2. Moving dbt and the loaders off ACCOUNTADMIN to a least-privilege role
+3. Final role of the sensor data (replay or calibration)
