@@ -1,0 +1,11 @@
+version: 2
+
+models:
+  - name: stg_sensor_readings
+    columns:
+      - name: sensor_id
+        tests:
+          - not_null
+      - name: reading_ts
+        tests:
+          - not_null
