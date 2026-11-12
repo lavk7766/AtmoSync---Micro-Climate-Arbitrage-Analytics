@@ -7,7 +7,7 @@ Snowflake raw sensor data, dbt staging, intermediate and mart models, and the da
 - Rows loaded: 1,083,195 from 9 sensors. The row count per sensor matches the loader output exactly (difference 0 for all 9 sensors), and first and last readings match.
 - Duplicate sensor and timestamp pairs: 0. Rows with NULL temperature or humidity: 0.
 - Humidity outside 0 to 100: 0. Temperature outside -30 to +70 C: 0.
-- Common window (INTERMEDIATE.int_sensor_readings_common_window): 2024-09-09 16:13:15 to 2024-09-11 03:32:40, 9 sensors, 228,906 rows (25,434 readings per sensor).
+- Overlap window of all 9 sensors (INTERMEDIATE.int_sensor_readings_common_window; the time span in which every sensor has readings, not the wider window of the preprocessed files described in section 2.5 of the data design document): 2024-09-09 16:13:15 to 2024-09-11 03:32:40, 9 sensors, 228,906 rows (25,434 readings per sensor).
 - Evidence: screenshots 01 and 02.
 
 ## 3. dbt execution
@@ -58,7 +58,7 @@ Per-kg conversion (STAGING.stg_commodity_price_monthly), evidence: screenshot 03
 ## 6. Issues found and fixed
 - No dbt test failed on 12 November.
 - Hardening added on 12 November: explicit ELSE NULL for non-convertible units, a tie-breaker in the latest-price ordering, and three new tests (conversion rules, unique product and series in the mart, banana series separate).
-- Earlier (11 November): the intermediate and marts models were building in the STAGING schema because the schema settings in dbt_project.yml were nested under the staging folder. Fixed; the run log shows INTERMEDIATE and MARTS.
+-Earlier (11 November): dbt_project.yml had no schema setting for the intermediate folder, so an intermediate model without its own setting would have been built in the default STAGING schema. A setting for the intermediate folder (view, schema intermediate) was added. The run log shows INTERMEDIATE and MARTS.
 
 ## 7. Evidence
 Logs: docs/evidence/. Screenshots: docs/screenshots/2026-11-12/.
