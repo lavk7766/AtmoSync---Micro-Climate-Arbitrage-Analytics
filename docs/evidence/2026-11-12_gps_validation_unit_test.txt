@@ -1,0 +1,21 @@
+﻿GPS required:
+PASS  valid event with GPS  ->  accepted
+PASS  latitude 95 (too high)  ->  rejected: latitude outside -90 to 90
+PASS  latitude -90.5 (too low)  ->  rejected: latitude outside -90 to 90
+PASS  longitude 181 (too high)  ->  rejected: longitude outside -180 to 180
+PASS  longitude -180.5 (too low)  ->  rejected: longitude outside -180 to 180
+PASS  latitude missing  ->  rejected: missing field: latitude
+PASS  longitude missing  ->  rejected: missing field: longitude
+PASS  latitude as text  ->  rejected: field is not numeric: latitude
+PASS  longitude as text  ->  rejected: field is not numeric: longitude
+PASS  latitude null  ->  rejected: missing field: latitude
+PASS  latitude NaN  ->  rejected: latitude is NaN
+PASS  boundary values 90 and -180 accepted  ->  accepted
+PASS  humidity 150 still rejected  ->  rejected: humidity_pct outside 0-100
+PASS  container_id missing still rejected  ->  rejected: missing or empty field: container_id
+
+GPS optional:
+PASS  GPS optional: both missing accepted  ->  accepted
+PASS  GPS optional: bad latitude still rejected  ->  rejected: latitude outside -90 to 90
+
+16 of 16 checks passed
