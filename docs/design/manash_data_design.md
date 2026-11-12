@@ -241,7 +241,7 @@ Design choices:
 | Model | Purpose |
 |---|---|
 | mart_container_latest | Latest reading per container |
-| mart_product_price_status | One row per spoilage-reference product and matched price series, with status direct_match, no_price_data or matched_not_convertible_to_per_kg |
+| mart_product_price_status | One row per spoilage-reference product and matched price series, with price_status "direct match", "no price data" or a third status for matched series that cannot be converted to per kg (exact value defined in the model; no product uses it today) |
 
 **Seed:** product_commodity_map (product to price series mapping)
 
