@@ -5,11 +5,11 @@ Status on 12 November 2026: not started. This plan lists the proposed logic, ass
 ## 1. Inputs and what is missing
 | Input | Where | Status |
 |---|---|---|
-| Telemetry (temperature, humidity, latitude, longitude) | stg_container_telemetry | Exists; latitude and longitude come from the simulator update (Aditya) |
-| Product per container | none | Missing: telemetry events carry no product. Needs a container list (container_id, product_name) or filled RAW_CONTAINER_METADATA |
+| Telemetry (temperature, humidity, latitude, longitude) | stg_container_telemetry | Exists. Aditya's simulator branch defines all nine event fields, including latitude and longitude (checked 13 Nov); not yet tested end to end with my loader |
+| Product per container | none | Missing: telemetry events carry no product. Aditya's supporting-schema document defines a container metadata record (container_id, product_name, quantity, origin, destination, batch_id) but no data exists yet. Its example spells the product "Tomatoes", while the spoilage CSV says "Tomato" |
 | Spoilage thresholds and shelf life per product | stg_product_spoilage_reference | Exists (20 products) |
 | Prices | int_commodity_price_latest | Exists for banana (Europe, US) and orange only; monthly, USD per kg |
-| Candidate markets with coordinates | none | Missing |
+| Candidate markets with coordinates | none | Missing. Only one route file exists (CONT001, Delhi to Lucknow via Agra, 533.88 km, about 6.6 hours) |
 | Quantity, planned destination, transport cost | RAW_CONTAINER_METADATA, RAW_ROUTE_INFO | Tables exist, no data |
 
 ## 2. mart_spoilage_risk (proposed logic)
@@ -49,6 +49,8 @@ Limit: prices exist only for banana and orange, and are monthly, so arbitrage re
 | mart_spoilage_risk version 1 | 18 Nov | shifts one day per day of delay |
 | mart_arbitrage version 1 | 22 Nov | shifts one day per day of delay |
 Week 3 of the plan runs 19 to 25 November and the mid-review is 27 to 30 November.
+
+Open point: the only route file (CONT001) takes about 6.6 hours, while products such as tomato last 96 to 168 hours in the spoilage reference. With a real-time simulation, no container would approach spoilage during one trip. To show a spoilage alert in the demo, the simulator needs a time-acceleration factor, longer routes or injected temperature faults. To agree with Aditya and Lav.
 
 ## 6. Tests planned
 Spoilage risk: one row per container, risk_level in the allowed set, remaining_shelf_life_hours not NULL for mapped products, every container has a product. Arbitrage: one recommendation per container, distance not negative, no recommendation without a price.
