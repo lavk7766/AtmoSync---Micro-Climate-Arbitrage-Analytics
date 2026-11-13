@@ -1,0 +1,32 @@
+﻿07:16:07  Running with dbt=1.12.6
+07:16:10  Registered adapter: snowflake=1.12.4
+07:16:12  Found 10 models, 47 data tests, 1 seed, 6 sources, 564 macros
+07:16:12  
+07:16:12  Concurrency: 4 threads (target='dev')
+07:16:12  
+07:16:15  3 of 10 START sql view model STAGING.stg_container_telemetry ................... [RUN]
+07:16:15  1 of 10 START sql view model STAGING.stg_commodity_price_monthly ............... [RUN]
+07:16:15  2 of 10 START sql view model STAGING.stg_commodity_prices ...................... [RUN]
+07:16:15  4 of 10 START sql view model STAGING.stg_household_fridge_readings ............. [RUN]
+07:16:17  2 of 10 OK created sql view model STAGING.stg_commodity_prices ................. [SUCCESS 1 in 1.15s]
+07:16:17  4 of 10 OK created sql view model STAGING.stg_household_fridge_readings ........ [SUCCESS 1 in 1.16s]
+07:16:17  1 of 10 OK created sql view model STAGING.stg_commodity_price_monthly .......... [SUCCESS 1 in 1.17s]
+07:16:17  5 of 10 START sql view model STAGING.stg_product_spoilage_reference ............ [RUN]
+07:16:17  6 of 10 START sql view model STAGING.stg_sensor_readings ....................... [RUN]
+07:16:17  7 of 10 START sql view model INTERMEDIATE.int_commodity_price_latest ........... [RUN]
+07:16:17  5 of 10 OK created sql view model STAGING.stg_product_spoilage_reference ....... [SUCCESS 1 in 0.39s]
+07:16:17  3 of 10 OK created sql view model STAGING.stg_container_telemetry .............. [SUCCESS 1 in 1.98s]
+07:16:17  8 of 10 START sql table model MARTS.mart_container_latest ...................... [RUN]
+07:16:18  6 of 10 OK created sql view model STAGING.stg_sensor_readings .................. [SUCCESS 1 in 0.98s]
+07:16:18  9 of 10 START sql view model INTERMEDIATE.int_sensor_readings_common_window .... [RUN]
+07:16:18  7 of 10 OK created sql view model INTERMEDIATE.int_commodity_price_latest ...... [SUCCESS 1 in 1.63s]
+07:16:18  9 of 10 OK created sql view model INTERMEDIATE.int_sensor_readings_common_window  [SUCCESS 1 in 0.66s]
+07:16:18  10 of 10 START sql table model MARTS.mart_product_price_status ................. [RUN]
+07:16:19  8 of 10 OK created sql table model MARTS.mart_container_latest ................. [SUCCESS 3 in 1.70s]
+07:16:20  10 of 10 OK created sql table model MARTS.mart_product_price_status ............ [SUCCESS 21 in 1.57s]
+07:16:23  
+07:16:23  Finished running 2 table models, 8 view models in 0 hours 0 minutes and 10.75 seconds (10.75s).
+07:16:23  
+07:16:23  Completed successfully
+07:16:23  
+07:16:23  Done. PASS=10 WARN=0 ERROR=0 SKIP=0 NO-OP=0 REUSED=0 TOTAL=10
