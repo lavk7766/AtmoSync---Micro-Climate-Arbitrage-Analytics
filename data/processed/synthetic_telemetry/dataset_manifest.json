@@ -1,0 +1,51 @@
+{
+    "dataset_name": "AtmoSync Synthetic Historical Telemetry",
+    "dataset_type": "synthetic_simulated",
+    "generated_at": "2026-11-13T17:08:25.577854+00:00",
+    "random_seed": 42,
+    "records_per_container": 50,
+    "total_records": 250,
+    "container_ids": [
+        "CONT001",
+        "CONT002",
+        "CONT003",
+        "CONT004",
+        "CONT005"
+    ],
+    "interval_minutes": 5,
+    "base_timestamp": "2026-11-01T00:00:00+00:00",
+    "last_timestamp": "2026-11-01T04:05:00Z",
+    "schema_fields": [
+        "event_id",
+        "container_id",
+        "timestamp",
+        "temperature_c",
+        "humidity_pct",
+        "vibration_g",
+        "latitude",
+        "longitude",
+        "source_type"
+    ],
+    "transport_speeds_kmh": {
+        "road": 60.0,
+        "rail": 80.0,
+        "sea": 30.0
+    },
+    "route_provenance": {
+        "CONT001": "OpenStreetMap-derived road route",
+        "CONT002": "Illustrative rail waypoints",
+        "CONT003": "Illustrative road waypoints",
+        "CONT004": "Illustrative rail waypoints",
+        "CONT005": "Illustrative sea waypoints"
+    },
+    "validation": {
+        "validator": "simulator.data_validator.validate_event",
+        "validated_records": 250,
+        "invalid_records": 0
+    },
+    "output_files": [
+        "historical_telemetry.csv",
+        "historical_telemetry.jsonl",
+        "dataset_manifest.json"
+    ]
+}
