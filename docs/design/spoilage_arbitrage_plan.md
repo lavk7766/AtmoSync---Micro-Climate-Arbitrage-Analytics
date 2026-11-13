@@ -1,16 +1,17 @@
 # Spoilage-Risk and Arbitrage Marts: Plan (Manash Mandal)
 
-Status on 12 November 2026: not started. This plan lists the proposed logic, assumptions, dependencies and dates. The model logic needs the Team Lead's approval before it is built.
+Status on 13 November 2026: metadata staging model and validation completed; spoilage-risk and arbitrage marts not started. The metadata schema remains proposed and requires team approval. 
 
 ## 1. Inputs and what is missing
 | Input | Where | Status |
 |---|---|---|
 | Telemetry (temperature, humidity, latitude, longitude) | stg_container_telemetry | Exists. Aditya's simulator branch defines all nine event fields, including latitude and longitude (checked 13 Nov); not yet tested end to end with my loader |
-| Product per container | none | Missing: telemetry events carry no product. Aditya's supporting-schema document defines a container metadata record (container_id, product_name, quantity, origin, destination, batch_id) but no data exists yet. Its example spells the product "Tomatoes", while the spoilage CSV says "Tomato" |
+| Product per container | stg_container_metadata | Staging model created and dbt run successful. One DEV_PLACEHOLDER row exists in Snowflake for development validation. Product spelling still needs team agreement: metadata example says "Tomatoes", spoilage CSV says "Tomato" |
+
 | Spoilage thresholds and shelf life per product | stg_product_spoilage_reference | Exists (20 products) |
 | Prices | int_commodity_price_latest | Exists for banana (Europe, US) and orange only; monthly, USD per kg |
 | Candidate markets with coordinates | none | Missing. Only one route file exists (CONT001, Delhi to Lucknow via Agra, 533.88 km, about 6.6 hours) |
-| Quantity, planned destination, transport cost | RAW_CONTAINER_METADATA, RAW_ROUTE_INFO | Tables exist, no data |
+| Quantity, planned destination, transport cost | RAW_CONTAINER_METADATA, RAW_ROUTE_INFO | Metadata table has one development placeholder row; real container metadata and route information are still missing |
 
 ## 2. mart_spoilage_risk (proposed logic)
 One row per container, from its readings in time order:
@@ -45,6 +46,7 @@ Limit: prices exist only for banana and orange, and are monthly, so arbitrage re
 | Item | Date | If a dependency is late |
 |---|---|---|
 | GPS validation in the loader and dbt tests | 12 Nov (done, see evidence) | none |
+| Container metadata staging model and tests | 13 Nov (done; 11 dbt models passed, 57 tests passed, 1 intentional warning) | none |
 | GPS check against real simulator events | 1 day after Aditya's push | shifts with his push |
 | mart_spoilage_risk version 1 | 18 Nov | shifts one day per day of delay |
 | mart_arbitrage version 1 | 22 Nov | shifts one day per day of delay |
@@ -54,3 +56,16 @@ Open point: the only route file (CONT001) takes about 6.6 hours, while products 
 
 ## 6. Tests planned
 Spoilage risk: one row per container, risk_level in the allowed set, remaining_shelf_life_hours not NULL for mapped products, every container has a product. Arbitrage: one recommendation per container, distance not negative, no recommendation without a price.
+
+## 7. Container metadata staging validation (13 November)
+
+- Registered RAW_CONTAINER_METADATA as a dbt source.
+- Created stg_container_metadata to standardize container IDs, product names, quantity units and text fields.
+- Added YAML tests for required fields and unique container IDs.
+- Added a positive-quantity singular SQL test.
+- Added a warning-level SQL test for development placeholder records.
+- dbt run: PASS=11, WARN=0, ERROR=0.
+- dbt test: PASS=57, WARN=1, ERROR=0.
+- The single warning is expected because the DEV_PLACEHOLDER record is still present.
+- Evidence: docs/evidence/2026-11-13_dbt_run.txt and docs/evidence/2026-11-13_dbt_test.txt.
+- The placeholder is for development validation only and must not be treated as real shipment data.
