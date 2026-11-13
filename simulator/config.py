@@ -4,6 +4,11 @@
 # Simulator settings
 NUM_CONTAINERS = 5
 SIMULATION_INTERVAL_SECONDS = 5
+# Simulation time acceleration.
+# 1.0 = normal time
+# 60.0 = 1 real second represents 1 simulated minute
+# 3600.0 = 1 real second represents 1 simulated hour
+SIMULATION_TIME_MULTIPLIER = 1.0
 # Maximum total events generated per run.
 # None means continuous simulation until CTRL+C.
 MAX_EVENTS = None

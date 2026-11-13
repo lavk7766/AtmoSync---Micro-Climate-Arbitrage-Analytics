@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime, timezone
+from simulator.simulation_clock import simulation_clock
 
 from simulator.config import SOURCE_TYPE
 from simulator.sensor_generator import generate_sensor_readings
@@ -21,7 +21,7 @@ def build_sensor_event(container_id):
     event = SensorEvent(
         event_id=str(uuid.uuid4()),
         container_id=container_id,
-        timestamp=datetime.now(timezone.utc),
+        timestamp=simulation_clock.now(),
         temperature_c=readings["temperature_c"],
         humidity_pct=readings["humidity_pct"],
         vibration_g=readings["vibration_g"],
