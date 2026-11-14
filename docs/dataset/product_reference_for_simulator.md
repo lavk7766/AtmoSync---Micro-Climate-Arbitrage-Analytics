@@ -67,7 +67,38 @@ The container metadata must use the spelling in the first column. dbt lowercases
 | source_url | STRING | none | Reference link |
 | notes | STRING | none | Free text |
 
-## 4. Risk rules (proposal, awaiting the coordinator's approval)
+## 4. Risk rules (proposal, awaiting coordinator approval)
+
+The canonical calculation rules are documented in docs/design/spoilage_arbitrage_plan.md, Section 2.
+
+### Shelf-life risk classification
+
+| Remaining shelf life | Risk level |
+|---|---|
+| Above 50% | NORMAL |
+| Above 25% and up to 50% | WARNING |
+| 25% or below | HIGH_RISK |
+
+### Excursion duration requirements
+
+| Measurement | Warning | Prolonged excursion |
+|---|---|---|
+| Temperature | 5 minutes | 30 minutes |
+| Humidity | 15 minutes | 60 minutes |
+
+### Simulator requirements
+
+- Expected sampling interval: 5 seconds.
+- Maximum valid reading interval: 15 seconds, pending confirmation.
+- Missing readings must not be treated as normal conditions.
+- Excessive gaps break continuous excursion tracking.
+- Proposed temperature tolerance for zero-width ranges: 0.5 C.
+- Products with zero-width temperature ranges: Strawberry, Mango, Broccoli, Cabbage, Carrot, Eggplant, Garlic, Spinach, Dry Onion.
+- Excursion percentages are diagnostic indicators, not a separate risk classification.
+- Humidity and low-temperature excursions generate separate alerts in version 1.
+- All duration thresholds, tolerances and aging assumptions require coordinator approval.
+
+These rules are prototype assumptions, not validated food-safety standards.
 - A temperature excursion is a reading below recommended_temp_min_c or above recommended_temp_max_c of the container's product. Humidity works the same with humidity_min_pct and humidity_max_pct.
 - Time between two readings counts as excursion time only up to 15 seconds (three times the expected 5-second interval), so a data gap is never counted as excursion time.
 - Risk level by the share of observed time outside the range: low below 5 percent, medium 5 to 20 percent, high above 20 percent. This is a prototype rating, not a food-safety rating.
@@ -90,4 +121,4 @@ Suggested file: data/reference/container_metadata.csv, comma-separated, UTF-8, o
 - Keep the nine-field telemetry event unchanged.
 - Generate temperature and humidity around best_temp_c and the humidity range of the container's product, read from the CSV, not hard-coded.
 - Scenarios: normal (inside the range), short excursion (a few minutes above the maximum), prolonged excursion (hours above the maximum), recovery. Any drift or fault option should default to off.
-- Mark all generated telemetry with source_type = synthetic_simulated.
+- Identify simulated data using source_type = synthetic_simulated in container metadata, without changing the nine-field telemetry event.
