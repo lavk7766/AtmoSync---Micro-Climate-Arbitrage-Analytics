@@ -1,0 +1,51 @@
+﻿SENSOR01 done
+SENSOR02 done
+SENSOR03 done
+SENSOR04 done
+SENSOR05 done
+SENSOR06 done
+SENSOR07 done
+SENSOR08 done
+SENSOR09 done
+
+RAW
+  sensor  records  temp_missing  hum_missing  both_missing  missing_slots  gap_count  largest_gap_s
+SENSOR01   156019             0            0             0            966          1         4835.0
+SENSOR02   156980             0            0             0              0          0            0.0
+SENSOR03    84450             0            0             0          72476          2       362295.0
+SENSOR04   151248             0            0             0              0          0            0.0
+SENSOR05    31146             0            0             0              0          0            0.0
+SENSOR06   156887             0            0             0              0          0            0.0
+SENSOR07   156885             0            0             0              0          0            0.0
+SENSOR08   156863             0            0             0              0          0            0.0
+SENSOR09    32717             0            0             0              0          0            0.0
+
+PREPROCESSED
+  sensor  records  temp_missing  hum_missing  both_missing  missing_slots  gap_count  largest_gap_s
+SENSOR01   156835           966          966           966              0          0            0.0
+SENSOR02   156835             0            0             0              0          0            0.0
+SENSOR03   156835         72391        72391         72391              0          0            0.0
+SENSOR04   156835          5667         5667          5667              0          0            0.0
+SENSOR05   156835        125734       125734        125734              0          0            0.0
+SENSOR06   156835             0            0             0              0          0            0.0
+SENSOR07   156835             0            0             0              0          0            0.0
+SENSOR08   156835             0            0             0              0          0            0.0
+SENSOR09   156835        124135       124135        124135              0          0            0.0
+
+VERIFICATION
+- Reported: 966 missing values in each field of the preprocessed SENSOR01 file.
+- Found in preprocessed SENSOR01: temperature 966, humidity 966, rows with both missing 966 (of 156835 rows). Result: CONFIRMED.
+- Raw SENSOR01: 0 missing temperature and 0 missing humidity values; 966 missing 5-second slots in 1 gap(s); largest gap 4835 s from 2024-09-09 07:04:10 to 2024-09-09 08:24:45.
+- The preprocessed missing count equals the missing 5-second slots of the raw file plus its empty values: the preprocessed file shows the raw gap(s) as empty rows.
+
+FINDINGS
+- Raw files with missing temperature or humidity values: 0 of 9 (temperature 0, humidity 0 in total).
+- Preprocessed files with missing values: 5 of 9 (temperature 328893, humidity 328893 in total).
+- Raw files with timestamp gaps: 2 of 9; missing 5-second slots in total 73442; largest gap 362295 s (SENSOR03).
+- Duplicate timestamps in raw files: 0; in preprocessed files: 0.
+- Repeated header lines inside raw files: 4 (each file has one header line at the top, extra ones are skipped).
+- Preprocessed rows without a raw counterpart: 328893 (fully empty: 328893, with values: 0).
+- Raw rows missing from the preprocessed files: 573.
+- overview.csv Length differs from the raw record count for 9 of 9 sensors (raw files contain 573 rows more in total than the overview lists).
+
+Report written to C:\Users\Dell\AtmoSync-Arbitrage\docs\dataset\sensor_missing_values_report.md

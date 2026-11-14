@@ -1,0 +1,10 @@
+sensor,raw_records,pre_records,timestamps_in_both,pre_only_rows,pre_only_fully_empty,pre_only_with_values,raw_only_rows,raw_temp_present_pre_missing,raw_hum_present_pre_missing,pre_temp_present_raw_missing,max_abs_temp_diff,max_abs_hum_diff,overview_length,raw_minus_overview,raw_matches_loader
+SENSOR01,156019,156835,155869,966,966,0,150,0,0,0,0.0,0.0,155869,150,yes
+SENSOR02,156980,156835,156835,0,0,0,145,0,0,0,0.0,0.0,156835,145,yes
+SENSOR03,84450,156835,84444,72391,72391,0,6,0,0,0,0.0,0.0,84444,6,yes
+SENSOR04,151248,156835,151168,5667,5667,0,80,0,0,0,0.0,0.0,151168,80,yes
+SENSOR05,31146,156835,31101,125734,125734,0,45,0,0,0,0.0,0.0,31101,45,yes
+SENSOR06,156887,156835,156835,0,0,0,52,0,0,0,0.0,0.0,156835,52,yes
+SENSOR07,156885,156835,156835,0,0,0,50,0,0,0,0.0,0.0,156835,50,yes
+SENSOR08,156863,156835,156835,0,0,0,28,0,0,0,0.0,0.0,156835,28,yes
+SENSOR09,32717,156835,32700,124135,124135,0,17,0,0,0,0.0,0.0,32700,17,yes
