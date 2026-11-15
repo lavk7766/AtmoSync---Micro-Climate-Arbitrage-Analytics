@@ -1,6 +1,7 @@
-import uuid
-from simulator.simulation_clock import simulation_clock
 
+import uuid
+
+from simulator.simulation_clock import simulation_clock
 from simulator.config import SOURCE_TYPE
 from simulator.sensor_generator import generate_sensor_readings
 from simulator.models import SensorEvent
@@ -11,8 +12,20 @@ from simulator.location_simulator import LocationSimulator
 location_simulator = LocationSimulator()
 
 
-def build_sensor_event(container_id):
-    readings = generate_sensor_readings()
+def build_sensor_event(
+    container_id,
+    product_reference=None,
+    fault_injector=None,
+):
+    # Use exactly the same timestamp for the event and fault evaluation.
+    event_timestamp = simulation_clock.now()
+
+    readings = generate_sensor_readings(
+        product_reference,
+        container_id=container_id,
+        timestamp=event_timestamp,
+        fault_injector=fault_injector,
+    )
 
     latitude, longitude = location_simulator.get_current_location(
         container_id
@@ -21,7 +34,7 @@ def build_sensor_event(container_id):
     event = SensorEvent(
         event_id=str(uuid.uuid4()),
         container_id=container_id,
-        timestamp=simulation_clock.now(),
+        timestamp=event_timestamp,
         temperature_c=readings["temperature_c"],
         humidity_pct=readings["humidity_pct"],
         vibration_g=readings["vibration_g"],
