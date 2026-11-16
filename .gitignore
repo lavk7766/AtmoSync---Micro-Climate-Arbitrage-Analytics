@@ -26,5 +26,9 @@ data/processed/synthetic_telemetry/*
 !data/processed/synthetic_telemetry/*.csv
 !data/processed/synthetic_telemetry/*.jsonl
 !data/processed/synthetic_telemetry/*.json
+
 # Logs
 *.log
+
+# Local OSMnx cache
+/cache/
