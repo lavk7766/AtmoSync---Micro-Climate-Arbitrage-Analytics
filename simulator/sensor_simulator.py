@@ -7,10 +7,19 @@ from simulator.event_builder import build_sensor_event, event_to_dict
 from kafka_client.producer import TelemetryProducer
 from simulator.container_generator import create_containers
 from simulator.data_validator import validate_event
+from simulator.simulation_metadata import (
+    load_product_references_for_containers,
+)
 
 
 def main():
     containers = create_containers()
+
+    # Load product references once before connecting to Kafka.
+    product_references = load_product_references_for_containers(
+        containers
+    )
+
     producer = TelemetryProducer()
 
     events_generated = 0
@@ -32,11 +41,14 @@ def main():
 
             for container_id in containers:
 
-                # Stop when the total event limit is reached.
                 if MAX_EVENTS is not None and events_generated >= MAX_EVENTS:
                     break
 
-                event = build_sensor_event(container_id)
+                event = build_sensor_event(
+                    container_id,
+                    product_reference=product_references.get(container_id),
+                )
+
                 event_data = event_to_dict(event)
                 events_generated += 1
 
@@ -55,7 +67,6 @@ def main():
                 else:
                     print(f"Invalid event: {message}")
 
-            # Stop without an unnecessary final sleep.
             if MAX_EVENTS is not None and events_generated >= MAX_EVENTS:
                 print("\nConfigured event limit reached.")
                 break
