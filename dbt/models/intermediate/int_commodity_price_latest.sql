@@ -11,4 +11,7 @@ select
     price        as latest_price,
     price_per_kg as latest_price_per_kg
 from {{ ref('stg_commodity_price_monthly') }}
-qualify row_number() over (partition by commodity order by price_month desc) = 1
+qualify row_number() over (
+    partition by commodity
+    order by price_month desc, loaded_at desc, price desc
+) = 1

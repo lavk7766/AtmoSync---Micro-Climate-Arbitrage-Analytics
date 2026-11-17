@@ -104,3 +104,26 @@ models:
           - accepted_values:
               arguments:
                 values: ['direct match', 'no price data', 'matched, not convertible to per kg']
+  
+  - name: stg_container_metadata
+    columns:
+      - name: container_id
+        tests:
+          - not_null
+          - unique
+      - name: product_name
+        tests:
+          - not_null
+      - name: quantity
+        tests:
+          - not_null
+      - name: quantity_unit
+        tests:
+          - not_null
+      - name: origin
+        tests:
+          - not_null
+      - name: destination
+        tests:
+          - not_null
+  

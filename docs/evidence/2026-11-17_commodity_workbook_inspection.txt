@@ -1,0 +1,329 @@
+﻿=== AtmoSync Commodity Workbook Inspection ===
+Workbook: CMO-Historical-Data-Monthly.xlsx
+
+Available sheets:
+  - Mismatch Details
+  - Monthly Prices
+  - Monthly Indices
+  - Description
+  - Index Weights
+
+Missing expected sheets: []
+
+================================================================================
+SHEET: Monthly Prices
+================================================================================
+Rows: 808
+Columns: 72
+Non-empty cells: 57886
+
+First 12 rows (first 8 columns):
+0            World Bank Commodity Price Data (The Pink Sheet)
+1       monthly prices in nominal US dollars, 1960 to present
+2   (monthly series are available only in nominal US dollars)
+3                                Updated on November 03, 2026
+4                                                              Crude oil, average  Crude oil, Brent  Crude oil, Dubai  Crude oil, WTI  Coal, Australian  Coal, South African **  Natural gas, US
+5                                                                         ($/bbl)           ($/bbl)           ($/bbl)         ($/bbl)            ($/mt)                  ($/mt)        ($/mmbtu)
+6                                                     1960M01                 1.6               1.6               1.6               à                 à                       à             0.14
+7                                                     1960M02                 1.6               1.6               1.6               à                 à                       à             0.14
+8                                                     1960M03                 1.6               1.6               1.6               à                 à                       à             0.14
+9                                                     1960M04                 1.6               1.6               1.6               à                 à                       à             0.14
+10                                                    1960M05                 1.6               1.6               1.6               à                 à                       à             0.14
+11                                                    1960M06                 1.6               1.6               1.6               à                 à                       à             0.14
+
+Monthly period layout:
+Monthly rows: 802
+First monthly Excel row: 7
+Start month: 1960-01
+End month: 2026-10
+Duplicate months: 0
+Chronological order: True
+
+Commodity names and units:
+  1: Crude oil, average | ($/bbl)
+  2: Crude oil, Brent | ($/bbl)
+  3: Crude oil, Dubai | ($/bbl)
+  4: Crude oil, WTI | ($/bbl)
+  5: Coal, Australian | ($/mt)
+  6: Coal, South African ** | ($/mt)
+  7: Natural gas, US | ($/mmbtu)
+  8: Natural gas, Europe | ($/mmbtu)
+  9: Liquefied natural gas, Japan | ($/mmbtu)
+  10: Natural gas index | (2010=100)
+  11: Cocoa | ($/kg)
+  12: Coffee, Arabica | ($/kg)
+  13: Coffee, Robusta | ($/kg)
+  14: Tea, avg 3 auctions | ($/kg)
+  15: Tea, Colombo | ($/kg)
+  16: Tea, Kolkata | ($/kg)
+  17: Tea, Mombasa | ($/kg)
+  18: Coconut oil | ($/mt)
+  19: Groundnuts | ($/mt)
+  20: Fish meal | ($/mt)
+  21: Groundnut oil ** | ($/mt)
+  22: Palm oil | ($/mt)
+  23: Palm kernel oil | ($/mt)
+  24: Soybeans | ($/mt)
+  25: Soybean oil | ($/mt)
+  26: Soybean meal | ($/mt)
+  27: Rapeseed oil | ($/mt)
+  28: Sunflower oil | ($/mt)
+  29: Barley | ($/mt)
+  30: Maize | ($/mt)
+  31: Sorghum | ($/mt)
+  32: Rice, Thai 5%  | ($/mt)
+  33: Rice, Thai 25%  | ($/mt)
+  34: Rice, Thai A.1 | ($/mt)
+  35: Rice, Viet Namese 5% | ($/mt)
+  36: Wheat, US SRW | ($/mt)
+  37: Wheat, US HRW | ($/mt)
+  38: Banana, Europe | ($/kg)
+  39: Banana, US | ($/kg)
+  40: Orange | ($/kg)
+  41: Beef ** | ($/kg)
+  42: Chicken ** | ($/kg)
+  43: Lamb ** | ($/kg)
+  44: Shrimps, Mexican | ($/kg)
+  45: Sugar, EU | ($/kg)
+  46: Sugar, US | ($/kg)
+  47: Sugar, world | ($/kg)
+  48: Tobacco, US import u.v. | ($/mt)
+  49: Logs, Cameroon | ($/cubic meter)
+  50: Logs, Malaysian | ($/cubic meter)
+  51: Sawnwood, Cameroon | ($/cubic meter)
+  52: Sawnwood, Malaysian | ($/cubic meter)
+  53: Plywood | (cents/sheet)
+  54: Cotton, A Index | ($/kg)
+  55: Rubber, TSR20 ** | ($/kg)
+  56: Rubber, RSS3 | ($/kg)
+  57: Phosphate rock | ($/mt)
+  58: DAP | ($/mt)
+  59: TSP | ($/mt)
+  60: Urea  | ($/mt)
+  61: Potassium chloride ** | ($/mt)
+  62: Aluminum | ($/mt)
+  63: Iron ore, cfr spot | ($/dmtu)
+  64: Copper | ($/mt)
+  65: Lead | ($/mt)
+  66: Tin | ($/mt)
+  67: Nickel | ($/mt)
+  68: Zinc | ($/mt)
+  69: Gold | ($/troy oz)
+  70: Platinum | ($/troy oz)
+  71: Silver | ($/troy oz)
+
+================================================================================
+SHEET: Monthly Indices
+================================================================================
+Rows: 811
+Columns: 17
+Non-empty cells: 13660
+
+First 12 rows (first 8 columns):
+0                         World Bank Commodity Price Data (The Pink Sheet)
+1   monthly indices based on nominal US dollars, 2010=100, 1960 to present
+2           (monthly series are available only in nominal US dollar terms)
+3                                             Updated on November 03, 2026
+4
+5                                                                           Total Index  Energy  Non-energy **
+6                                                                                                               Agriculture **
+7                                                                                                                               Beverages  Food **
+8                                                                                                                                                   Oils & Meals
+9                                                                  1960M01          7.6     2.1           18.8              22       25.4     21.2          23.2
+10                                                                 1960M02          7.6     2.1           18.7            21.8       25.1     20.9          22.5
+11                                                                 1960M03          7.6     2.1           18.7            21.9       24.6     21.1          22.2
+
+Monthly period layout:
+Monthly rows: 802
+First monthly Excel row: 10
+Start month: 1960-01
+End month: 2026-10
+Duplicate months: 0
+Chronological order: True
+
+Header and index base information:
+0                        World Bank Commodity Price Data (The Pink Sheet)
+1  monthly indices based on nominal US dollars, 2010=100, 1960 to present
+2          (monthly series are available only in nominal US dollar terms)
+3                                            Updated on November 03, 2026
+4
+5                                                                          Total Index  Energy  Non-energy **                                                                        Precious Metals
+6                                                                                                              Agriculture **                  Fertilizers **  Metals  & Minerals
+
+================================================================================
+SHEET: Description
+================================================================================
+Rows: 135
+Columns: 20
+Non-empty cells: 251
+
+First 12 rows (first 8 columns):
+0   World Bank Commodity Price Data (The Pink Sheet)
+1                                 Series Description
+2                                             Energy
+3                                                  *                Coal (Australia), from February 2022, port thermal, f.o.b. Newcastle, 6000 kcal/kg futures price. From 2015 to January 2022, port thermal, f.o.b. Newcastle, 6000 kcal/kg spot price. 2002-2014, thermal GAR, f.o.b. piers, Newcastle/Port Kembla , 6,300 kcal/kg (11,340 btu/lb), less than 0.8%, sulfur 13% ash; previously 6,667 kcal/kg (12,000 btu/lb), less than 1.0% sulfur, 14%  ash
+4                                                                                                                                                                                                                    Coal (Colombia), thermal GAR, f.o.b. Bolivar,  6,450 kcal/kg, (11,200 btu/lb), less than 1.0%, sulfur 16% ash from August 2005 onwards; during years 2002-July 2005 11,600 btu/lb, less than .8% sulfur, 9% ash , 180 days forward delivery
+5                                                     Coal (South Africa), from January 2015, f.o.b. Richards Bay, NAR, 6,000 kcal/kg, sulfur less than 1%, forward month 1;  from February 13, 2017 to December 2017, thermal NAR netback assessment f.o.b. Richards Bay 6,000 kcal/kg; during 2006-February 10, 2017 thermal NAR; during 2002-2005 6,200 kcal/kg (11,200 btu/lb), less than 1.0%, sulfur 16% ash; years 1990-2001 6390 kcal/kg (11,500 btu/lb)
+6                                                  *                                                                                                                                                                                                                                                                                                                 Crude oil, average spot price of Brent, Dubai and West Texas  Intermediate, equally weighed
+7                                                                                                                                                                                                                                                                                                                                                                                                                                   Crude oil, UK Brent 38` API.
+8                                                                                                                                                                                                                                                                                                                                                          Crude oil, Dubai Fateh 32` API for years 1985-present; 1960-84 refer to Saudi Arabian Light, 34` API.
+9                                                                                                                                                                                                                                                                                                                                                                                                          Crude oil, US, West Texas Intermediate (WTI) 40` API.
+10                                                 *                                                                                                                                                                                                                        Natural gas index (Laspeyres), average of Europe, US and Japan (LNG), weights based on 5-year average consumption volumes, updated every 5 years, except the 11-year period 1960-70.
+11                                                 *                                                                                                                                                                       Natural Gas (Europe), from April 2015, Netherlands Title Transfer Facility (TTF); April 2010 to March 2015, average import border price and a spot price component, including UK; during June 2000 - March 2010 prices excludes UK.
+
+No YYYYMmm periods detected in column A.
+
+================================================================================
+SHEET: Index Weights
+================================================================================
+Rows: 90
+Columns: 19
+Non-empty cells: 205
+
+First 12 rows (first 8 columns):
+0   Weights Used in the World Bank Commodity Price Index (in Percent) 1/
+1         based on 2002-04 developing countries' export values 2/ and 3/
+2                                                                                     Commodity Group
+3                                                                                         Total Index
+4                                                                                                          Energy
+5                                                                                                      Non-Energy
+6
+7                                                                             Energy
+8                                                                                                                         Coal
+9                                                                                                                    Crude Oil
+10                                                                                                                 Natural Gas
+11                                                                        Non-energy
+
+No YYYYMmm periods detected in column A.
+
+Index weight preview:
+0   Weights Used in the World Bank Commodity Price Index (in Percent) 1/
+1         based on 2002-04 developing countries' export values 2/ and 3/
+2                                                                                     Commodity Group                                                Share of\nenergy and    non-energy indices      Share of\nsub-group indices      Share of\nfood index
+3                                                                                         Total Index                                                                                       100                                                                   World Bank Commodity Price Indexes: Groups and weights
+4                                                                                                          Energy                                                                            67
+5                                                                                                      Non-Energy                                                                            33
+6
+7                                                                             Energy                                                                                                        100                              100
+8                                                                                                                            Coal                                                      4.657419                         4.657419
+9                                                                                                                       Crude Oil                                                      84.57083                         84.57083
+10                                                                                                                    Natural Gas                                                     10.771752                        10.771752
+11                                                                        Non-energy                                                                                                 100.045844
+12                                                                                        Agriculture                                                                                 64.856461
+13                                                                                                           Food                                                                     40.030538                                                        100
+14                                                                                                                        Cereals                                                     11.282998                              100                 28.185977
+15                                                                                                                                        Rice                                         3.391864                        30.061722                   8.47319
+16                                                                                                                                       Wheat                                         2.838187                        25.154542                  7.090053
+17                                                                                                                                    Maize  4/                                        4.589332                        40.674757                 11.464578
+18                                                                                                                                     Barley                                          0.463616                          4.10898                  1.158156
+19
+20                                                                                                                 Oils and Meals                                                     16.332785                              100                 40.800813
+21                                                                                                                                     Soybeans                                        4.024177                        24.638647                 10.052768
+22                                                                                                                                  Soybean Oil                                        2.129999                        13.041248                  5.320935
+23                                                                                                                                 Soybean Meal                                        4.287789                        26.252651                 10.711295
+24                                                                                                                                     Palm Oil                                        4.932507                        30.200039                 12.321862
+
+================================================================================
+SHEET: Mismatch Details
+================================================================================
+Rows: 156
+Columns: 7
+Non-empty cells: 1073
+
+First 12 rows (first 8 columns):
+0                                                               MISMATCH DETAILS
+1   Exact cell-by-cell comparison; ..., à, and empty cells are treated as blanks
+2
+3                                                                         Period  Commodity  Current Cell  Current Display  Uploaded Cell  Uploaded Display  Difference Type
+4                                                                        2020M09     Barley         AD736          (blank)          AD735              80.4  Blank vs number
+5                                                                        2020M09    Sorghum         AF736          (blank)          AF735             189.6  Blank vs number
+6                                                                        2020M10     Barley         AD737          (blank)          AD736              80.5  Blank vs number
+7                                                                        2020M10    Sorghum         AF737          (blank)          AF736             189.6  Blank vs number
+8                                                                        2020M11     Barley         AD738          (blank)          AD737              82.9  Blank vs number
+9                                                                        2020M11    Sorghum         AF738          (blank)          AF737             190.2  Blank vs number
+10                                                                       2020M12     Barley         AD739          (blank)          AD738              85.6  Blank vs number
+11                                                                       2020M12    Sorghum         AF739          (blank)          AF738             191.2  Blank vs number
+
+Monthly period layout:
+Monthly rows: 152
+First monthly Excel row: 5
+Start month: 2020-09
+End month: 2026-07
+Duplicate months: 81
+Chronological order: True
+
+Mismatch details preview:
+0                                                               MISMATCH DETAILS
+1   Exact cell-by-cell comparison; ..., à, and empty cells are treated as blanks
+2
+3                                                                         Period  Commodity  Current Cell  Current Display  Uploaded Cell  Uploaded Display  Difference Type
+4                                                                        2020M09     Barley         AD736          (blank)          AD735              80.4  Blank vs number
+5                                                                        2020M09    Sorghum         AF736          (blank)          AF735             189.6  Blank vs number
+6                                                                        2020M10     Barley         AD737          (blank)          AD736              80.5  Blank vs number
+7                                                                        2020M10    Sorghum         AF737          (blank)          AF736             189.6  Blank vs number
+8                                                                        2020M11     Barley         AD738          (blank)          AD737              82.9  Blank vs number
+9                                                                        2020M11    Sorghum         AF738          (blank)          AF737             190.2  Blank vs number
+10                                                                       2020M12     Barley         AD739          (blank)          AD738              85.6  Blank vs number
+11                                                                       2020M12    Sorghum         AF739          (blank)          AF738             191.2  Blank vs number
+12                                                                       2021M01     Barley         AD740          (blank)          AD739              90.3  Blank vs number
+13                                                                       2021M01    Sorghum         AF740          (blank)          AF739             195.8  Blank vs number
+14                                                                       2021M02     Barley         AD741          (blank)          AD740              94.8  Blank vs number
+15                                                                       2021M02    Sorghum         AF741          (blank)          AF740             200.2  Blank vs number
+16                                                                       2021M03     Barley         AD742          (blank)          AD741              98.6  Blank vs number
+17                                                                       2021M03    Sorghum         AF742          (blank)          AF741             203.3  Blank vs number
+18                                                                       2021M04     Barley         AD743          (blank)          AD742             103.5  Blank vs number
+19                                                                       2021M04    Sorghum         AF743          (blank)          AF742             208.5  Blank vs number
+20                                                                       2021M05     Barley         AD744          (blank)          AD743             110.4  Blank vs number
+21                                                                       2021M05    Sorghum         AF744          (blank)          AF743             217.2  Blank vs number
+22                                                                       2021M06     Barley         AD745          (blank)          AD744               115  Blank vs number
+23                                                                       2021M06    Sorghum         AF745          (blank)          AF744               222  Blank vs number
+24                                                                       2021M07     Barley         AD746          (blank)          AD745             118.2  Blank vs number
+
+=== Relevant Commodity Descriptions ===
+
+Description:
+51   NaN  Bananas (Central & South America), major brands, free on truck (f.o.t.) Southern Europe, including duties; prior to October 2006, f.o.t. Hamburg.   Food and Agricultural Organization;  Nova Media Publishing, Inc.; Union of Banana-Exporting Countries (UPEB); US Bureau of Labor Statistics; World Bank.
+52     *                                            Bananas (Central & South America), major brands, US import price, free on truck (f.o.t.) US Gulf ports.   Food and Agricultural Organization;  Nova Media Publishing, Inc.; Union of Banana-Exporting Countries (UPEB); US Bureau of Labor Statistics; World Bank.
+56     *                                                       Oranges (Mediterranean exporters) navel, European Union indicative import price, c.i.f. Paris                                      Bloomberg Finance L.P.; INTERFEL, Fel Actualite hebdo; FRuiTrop; Marche Europeens Des Fruits et Legumes; World Bank.
+
+Index Weights:
+30  NaN                                        NaN      Bananas   1.94532  15.669418  4.859589
+33  NaN                                        NaN  Oranges  6/  1.441849  11.613999  3.601874
+84  6/   The oranges weight includes orange juice.          NaN       NaN        NaN       NaN
+
+=== Complete Mismatch Summary ===
+Total mismatch rows: 152
+
+Mismatches by commodity:
+Commodity
+Barley                          71
+Sorghum                         71
+Fish meal                        1
+Groundnut oil **                 1
+Liquefied natural gas, Japan     1
+Natural gas index                1
+Palm kernel oil                  1
+Rapeseed oil                     1
+Soybean meal                     1
+Soybean oil                      1
+Soybeans                         1
+Sunflower oil                    1
+
+Mismatches by difference type:
+Difference Type
+Blank vs number    142
+Value mismatch      10
+
+Duplicate period-commodity keys:
+0
+
+Banana and Orange mismatches:
+Empty DataFrame
+Columns: [Period, Commodity, Current Cell, Current Display, Uploaded Cell, Uploaded Display, Difference Type]
+Index: []
+Relevant fruit mismatches: 0
+
+================================================================================
+Workbook inspection completed.
+Original workbook unchanged.
+================================================================================

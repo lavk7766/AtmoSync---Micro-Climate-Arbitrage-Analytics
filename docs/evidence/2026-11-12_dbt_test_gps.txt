@@ -1,0 +1,16 @@
+﻿15:54:15  Running with dbt=1.12.6
+15:54:25  Registered adapter: snowflake=1.12.4
+15:54:34  Found 10 models, 49 data tests, 1 seed, 6 sources, 564 macros
+15:54:34  
+15:54:34  Concurrency: 4 threads (target='dev')
+15:54:34  
+15:54:36  1 of 2 START test assert_telemetry_gps_in_range ................................ [RUN]
+15:54:36  2 of 2 START test assert_telemetry_gps_present ................................. [RUN]
+15:54:38  1 of 2 PASS assert_telemetry_gps_in_range ...................................... [PASS in 1.46s]
+15:54:38  2 of 2 PASS assert_telemetry_gps_present ....................................... [PASS in 1.47s]
+15:54:39  
+15:54:39  Finished running 2 data tests in 0 hours 0 minutes and 4.77 seconds (4.77s).
+15:54:39  
+15:54:39  Completed successfully
+15:54:39  
+15:54:39  Done. PASS=2 WARN=0 ERROR=0 SKIP=0 NO-OP=0 REUSED=0 TOTAL=2

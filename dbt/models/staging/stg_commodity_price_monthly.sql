@@ -17,6 +17,7 @@ select
     case
         when trim(unit) = '$/kg' then price
         when trim(unit) = '$/mt' then price / 1000
+        else null
     end                    as price_per_kg,
     source_file,
     loaded_at

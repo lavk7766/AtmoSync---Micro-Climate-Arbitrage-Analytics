@@ -34,6 +34,7 @@ MAX_RETRIES = 3
 
 REQUIRED_TEXT_FIELDS = ["event_id", "container_id", "timestamp", "source_type"]
 REQUIRED_NUMERIC_FIELDS = ["temperature_c", "humidity_pct", "vibration_g"]
+GPS_REQUIRED = os.environ.get("GPS_REQUIRED", "true").lower() == "true"
 
 logging.basicConfig(
     level=logging.INFO,
@@ -62,8 +63,21 @@ def validate(event):
         if isinstance(value, bool) or not isinstance(value, (int, float)):
             return f"field is not numeric: {field}"
 
-    if not 0 <= event["humidity_pct"] <= 100:
-        return "humidity_pct outside 0-100"
+        if not 0 <= event["humidity_pct"] <= 100:
+                return "humidity_pct outside 0-100"
+
+    for name, low, high in (("latitude", -90, 90), ("longitude", -180, 180)):
+        value = event.get(name)
+        if value is None:
+            if GPS_REQUIRED:
+                return f"missing field: {name}"
+            continue
+        if isinstance(value, bool) or not isinstance(value, (int, float)):
+            return f"field is not numeric: {name}"
+        if value != value:  # NaN
+            return f"{name} is NaN"
+        if not low <= value <= high:
+            return f"{name} outside {low} to {high}"
 
     return None
 
