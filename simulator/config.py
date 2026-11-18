@@ -26,3 +26,14 @@ VIBRATION_RANGE = (0.0, 1.0)
 
 # Event settings
 SOURCE_TYPE = "synthetic_simulated"
+# Scheduled temperature fault injection.
+TEMPERATURE_FAULT_ENABLED = True
+TEMPERATURE_FAULT_CONTAINER_ID = "CONT001"
+
+# Values are measured in simulated seconds.
+TEMPERATURE_FAULT_START_DELAY_SECONDS = 5.0
+TEMPERATURE_FAULT_DURATION_SECONDS = 30.0
+
+# Inject a high-temperature excursion above the product's
+# recommended maximum, rather than hard-coding a product limit.
+TEMPERATURE_FAULT_OFFSET_C = 5.0
