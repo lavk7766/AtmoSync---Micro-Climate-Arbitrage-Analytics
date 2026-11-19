@@ -84,33 +84,66 @@ sensor population or label them as container readings.
 
 ## 4. World Bank Commodity Price Dataset
 
-**Source:** CMO-Historical-Data-Monthly.xlsx  
-**Worksheet:** Monthly Prices  
-**Frequency:** Monthly  
-**Latest source update inspected:** 03 November 2026  
+**Source:** `data/raw/commodity_prices/CMO-Historical-Data-Monthly.xlsx`
+**Worksheet:** Monthly Prices
+**Publisher:** World Bank Commodity Price Data (The Pink Sheet)
+**Frequency:** Monthly
+**Price basis:** Nominal US dollars
+**Source update date:** 03 November 2026
 **Latest available month inspected:** October 2026
+**Historical coverage:** January 1960 to October 2026
 
-| Source field / series | Proposed dashboard field | Unit | Description |
+### Priority commodities for the market dashboard
+
+| Excel column | Source series | Proposed dashboard field | Verified unit |
 |---|---|---|---|
-| Date | price_month | YYYYMM | Monthly observation period |
-| Cocoa | cocoa_price | USD/metric tonne | Global benchmark price |
-| Arabica Coffee | arabica_coffee_price | USD/kg | Global benchmark price |
-| Maize | maize_price | USD/metric tonne | Global benchmark price |
-| Thai Rice 5% | thai_rice_5pct_price | USD/metric tonne | Global benchmark price |
-| US Wheat SRW | us_wheat_srw_price | USD/metric tonne | Global benchmark price |
-| Crude Oil Average | crude_oil_avg_price | USD/barrel | Global benchmark price |
-| US Natural Gas | us_natural_gas_price | USD/MMBtu | Global benchmark price |
-| Gold | gold_price | USD/troy ounce | Global benchmark price |
+| L | Cocoa | cocoa_price | USD/kg |
+| M | Coffee, Arabica | arabica_coffee_price | USD/kg |
+| N | Coffee, Robusta | robusta_coffee_price | USD/kg |
+| W | Palm oil | palm_oil_price | USD/metric tonne |
+| Y | Soybeans | soybeans_price | USD/metric tonne |
+| AE | Maize | maize_price | USD/metric tonne |
+| AG | Rice, Thai 5% | thai_rice_5pct_price | USD/metric tonne |
 
-**Dashboard usage:**
+The six-commodity initial dashboard shortlist is Cocoa, Arabica Coffee,
+Palm Oil, Soybeans, Maize and Thai Rice 5%. Robusta Coffee is documented
+as an additional available series.
+
+### Other documented benchmark series
+
+| Excel column | Source series | Proposed dashboard field | Verified unit |
+|---|---|---|---|
+| B | Crude oil, average | crude_oil_avg_price | USD/barrel |
+| H | Natural gas, US | us_natural_gas_price | USD/MMBtu |
+| AK | Wheat, US SRW | us_wheat_srw_price | USD/metric tonne |
+| BR | Gold | gold_price | USD/troy ounce |
+
+### Source and field interpretation
+
+- Source observation date is stored in the workbook in `YYYYMmm` form,
+  for example `2026M10`. Normalize it to a monthly date field such as
+  `price_month` when preparing the staging model.
+- Measurement units are taken from row 6 of the `Monthly Prices` worksheet.
+- The workbook's row 4 records the source update date. This is distinct
+  from the latest observation month.
+- The `Description` worksheet provides series definitions and source
+  information. Some commodity specifications change over historical
+  periods; retain the published series identity and source metadata.
+
+### Dashboard usage
+
 - Monthly commodity price trends.
 - Latest available benchmark price.
 - Month-over-month percentage change.
+- Year-over-year percentage change.
 - Historical price comparison.
 
+Display the correct unit with every price. Do not compare USD/kg and
+USD/metric tonne values on a common unconverted scale.
+
 **Important:** These are global benchmark prices, not local Indian market
-offers. They cannot independently establish profitable arbitrage.
-Local prices, transport costs, availability and timing are also required.
+offers. They cannot independently establish profitable arbitrage. Local
+prices, transport costs, availability and timing are also required.
 
 ## 5. Proposed Common Dashboard Fields
 

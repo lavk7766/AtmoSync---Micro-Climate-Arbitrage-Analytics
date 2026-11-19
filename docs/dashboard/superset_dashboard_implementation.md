@@ -114,3 +114,98 @@ behaviour remain subject to team review.
 - Keep household refrigerator reference data separate from shipping-container
   telemetry.
 - Clearly label synthetic or provisional data and calculations.
+
+## 9. Commodity Market Dashboard Requirements
+
+### 9.1 Purpose and scope
+
+The commodity-market dashboard will provide historical monitoring of
+selected global commodity benchmark prices using the World Bank Commodity
+Price Data (The Pink Sheet).
+
+The initial dashboard scope covers six commodities:
+- Cocoa
+- Coffee, Arabica
+- Palm oil
+- Soybeans
+- Maize
+- Rice, Thai 5%
+
+Coffee, Robusta is documented as an additional available series and may
+be included in a later dashboard iteration.
+
+### 9.2 Source dataset
+
+- Source file: `data/raw/commodity_prices/CMO-Historical-Data-Monthly.xlsx`
+- Worksheet: `Monthly Prices`
+- Frequency: Monthly
+- Price basis: Nominal US dollars
+- Source update date inspected: 03 November 2026
+- Latest observation inspected: October 2026
+- Historical coverage inspected: January 1960 to October 2026
+
+The source update date must not be confused with the latest observation
+month. The dashboard should display the latest available observation
+month for the selected commodity.
+
+### 9.3 Proposed KPI cards
+
+1. Latest Commodity Price – latest non-missing monthly price for the
+   selected commodity, displayed with its original unit.
+2. Month-over-Month Change (%) – percentage change from the previous
+   available month.
+3. Year-over-Year Change (%) – percentage change from the corresponding
+   month in the previous year.
+4. Latest Observation Month – latest month with a valid price for the
+   selected commodity.
+
+Percentage-change calculations must use valid observations and handle
+missing values and zero denominators explicitly.
+
+### 9.4 Proposed charts
+
+- Monthly Commodity Price Trend – monthly historical price for the
+  selected commodity.
+- Commodity Price Comparison – comparison across selected commodities.
+- Monthly Percentage Change – month-over-month percentage movement.
+
+The comparison chart must not place incompatible units on a common
+unconverted scale. Use explicit unit conversion or separate unit groups.
+Any normalized comparison must clearly state its base period and method.
+
+### 9.5 Proposed dashboard filters
+
+- Commodity
+- Observation Date Range
+
+Filters should apply consistently to the commodity KPIs and charts,
+except where a KPI explicitly requires a fixed comparison period.
+
+### 9.6 Data-quality and interpretation rules
+
+- Preserve the original source value and commodity series identity.
+- Treat unavailable markers such as `...` as missing values, not zero.
+- Validate monthly dates, numeric values and units before loading.
+- Do not calculate percentage changes across invalid or missing
+  observations as though they were valid prices.
+- Display the price unit on every KPI and chart.
+- Retain source update date and latest observation month as separate
+  metadata fields.
+- Preserve historical source-definition changes where relevant.
+- Clearly identify the World Bank benchmark as a global reference price.
+
+### 9.7 Scope limitations
+
+World Bank benchmark prices are not local Indian market offers.
+They do not independently establish profitable arbitrage opportunities.
+
+Further analysis requires appropriate local market prices, transport
+and handling costs, availability, timing and other relevant transaction
+costs. Dashboard trends should be presented as market-reference
+indicators, not guaranteed trading opportunities.
+
+### 9.8 Implementation status
+
+This section records proposed requirements. The commodity staging model,
+Snowflake table, Superset dataset, KPI calculations, chart configuration
+and filter behaviour must be verified before being marked complete.
