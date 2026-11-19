@@ -1,0 +1,14 @@
+﻿CONT001 | Apple | 1000 kg | Delhi -> Lucknow
+CONT002 | Banana | 1000 kg | Mumbai -> Solapur
+CONT003 | Orange | 800 kg | Bengaluru -> Kurnool
+CONT004 | Tomato | 500 kg | Kolkata -> Patna
+CONT005 | Strawberry | 300 kg | Mumbai -> Mangaluru
+
+=== CONTAINER METADATA VALIDATION ===
+Total containers: 5
+Unique containers: 5
+Reference products available: 20
+Validation errors: 0
+RESULT: PASSED
+Product mappings and route checks passed.
+Approval status: PENDING COORDINATOR REVIEW
