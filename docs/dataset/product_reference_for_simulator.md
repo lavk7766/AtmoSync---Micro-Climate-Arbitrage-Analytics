@@ -122,3 +122,48 @@ Suggested file: data/reference/container_metadata.csv, comma-separated, UTF-8, o
 - Generate temperature and humidity around best_temp_c and the humidity range of the container's product, read from the CSV, not hard-coded.
 - Scenarios: normal (inside the range), short excursion (a few minutes above the maximum), prolonged excursion (hours above the maximum), recovery. Any drift or fault option should default to off.
 - Identify simulated data using source_type = synthetic_simulated in container metadata, without changing the nine-field telemetry event.
+
+
+## 6. Product Reference Verification — 19 November 2026
+
+### Data source
+
+- Organization: Food and Agriculture Organization (FAO).
+- Reference: Chapter 7 — Storage of Horticultural Crops.
+- URL: https://www.fao.org/4/ae075e/ae075e15.htm
+- Original table source: McGregor, B.M. (1989), Tropical Products Transport Handbook, USDA Agricultural Handbook 668.
+
+### Units and transformation rules
+
+- Temperature: degrees Celsius (°C).
+- Humidity: relative humidity percentage (%).
+- Shelf life: hours.
+- One day = 24 hours.
+- One week = 168 hours.
+- One month = 720 hours, using a 30-day approximation.
+- best_temp_c is the calculated midpoint of the recommended temperature range, used as a simulator setpoint.
+
+### Validation results
+
+- Total products: 20
+- Unique products: 20
+- Duplicate products: 0
+- Invalid temperature ranges: 0
+- Invalid humidity ranges: 0
+- Invalid shelf-life ranges: 0
+- Validation errors: 0
+- Result: PASSED
+
+Validation script: scripts/validate_product_reference.py
+
+Execution evidence: docs/evidence/2026-11-19_product_reference_validation.txt
+
+### Limitations
+
+The reference values represent approximate storage conditions for specific product stages and varieties. They are not guaranteed spoilage predictions or food-safety thresholds.
+
+The midpoint temperature, month-to-hour conversion, excursion tolerance and spoilage-risk calculations are project conventions or prototype assumptions.
+
+### Approval status
+
+Product reference consistency validation is complete. Final coordinator approval and container assignments are pending.

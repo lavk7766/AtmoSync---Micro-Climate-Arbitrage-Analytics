@@ -1,0 +1,21 @@
+product_name,product_stage_or_variety,recommended_temp_min_c,recommended_temp_max_c,best_temp_c,humidity_min_pct,humidity_max_pct,shelf_life_min_hours,shelf_life_max_hours,data_source,source_url,notes
+Apple,General fresh apples,-1,4,1.5,90,95,720,8640,FAO,https://www.fao.org/4/ae075e/ae075e15.htm,Approximate storage life 1-12 months; variety and atmosphere affect duration.
+Banana,Green bananas,13,14,13.5,90,95,2352,2352,FAO,https://www.fao.org/4/ae075e/ae075e15.htm,Reference storage life 14 weeks for green bananas.
+Tomato,Firm-ripe tomatoes,13,15,14,90,95,96,168,FAO,https://www.fao.org/4/ae075e/ae075e15.htm,Approximate storage life 4-7 days for firm-ripe tomatoes.
+Strawberry,Fresh strawberries,0,0,0,90,95,120,168,FAO,https://www.fao.org/4/ae075e/ae075e15.htm,Approximate storage life 5-7 days.
+Apricot,Fresh apricots,-0.5,0,-0.25,90,95,168,504,FAO,https://www.fao.org/4/ae075e/ae075e15.htm,Approximate storage life 1-3 weeks.
+Blueberry,Fresh blueberries,-0.5,0,-0.25,90,95,336,336,FAO,https://www.fao.org/4/ae075e/ae075e15.htm,Approximate storage life 2 weeks.
+Grape,Vinifera grapes,-1,-0.5,-0.75,90,95,720,4320,FAO,https://www.fao.org/4/ae075e/ae075e15.htm,Approximate storage life 1-6 months; treatment and variety matter.
+Guava,Fresh guavas,5,10,7.5,90,90,336,504,FAO,https://www.fao.org/4/ae075e/ae075e15.htm,Approximate storage life 2-3 weeks.
+Mango,Fresh mangoes,13,13,13,85,90,336,504,FAO,https://www.fao.org/4/ae075e/ae075e15.htm,Approximate storage life 2-3 weeks.
+Orange,California and Arizona oranges,3,9,6,85,90,504,1344,FAO,https://www.fao.org/4/ae075e/ae075e15.htm,Approximate storage life 3-8 weeks; regional variety matters.
+Broccoli,Fresh broccoli,0,0,0,95,100,240,336,FAO,https://www.fao.org/4/ae075e/ae075e15.htm,Approximate storage life 10-14 days.
+Cabbage,Early crop cabbage,0,0,0,98,100,504,1008,FAO,https://www.fao.org/4/ae075e/ae075e15.htm,Approximate storage life 3-6 weeks.
+Carrot,Mature carrots,0,0,0,98,100,5040,6480,FAO,https://www.fao.org/4/ae075e/ae075e15.htm,Approximate storage life 7-9 months.
+Cucumber,Fresh cucumbers,10,13,11.5,95,95,240,336,FAO,https://www.fao.org/4/ae075e/ae075e15.htm,Approximate storage life 10-14 days.
+Eggplant,Fresh eggplants,12,12,12,90,95,168,168,FAO,https://www.fao.org/4/ae075e/ae075e15.htm,Approximate storage life 1 week.
+Garlic,Cured garlic,0,0,0,65,70,4320,5040,FAO,https://www.fao.org/4/ae075e/ae075e15.htm,Approximate storage life 6-7 months; curing is important.
+Spinach,Fresh spinach,0,0,0,95,100,240,336,FAO,https://www.fao.org/4/ae075e/ae075e15.htm,Approximate storage life 10-14 days.
+Sweet Pepper,Fresh sweet peppers,7,13,10,90,95,336,504,FAO,https://www.fao.org/4/ae075e/ae075e15.htm,Approximate storage life 2-3 weeks.
+Green Beans,Fresh green or snap beans,4,7,5.5,95,95,168,240,FAO,https://www.fao.org/4/ae075e/ae075e15.htm,Approximate storage life 7-10 days.
+Dry Onion,Cured dry onions,0,0,0,65,70,720,5760,FAO,https://www.fao.org/4/ae075e/ae075e15.htm,Approximate storage life 1-8 months; requires dry storage conditions.
