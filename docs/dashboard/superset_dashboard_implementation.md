@@ -36,12 +36,57 @@ review and commodity-market analysis.
 
 ## 3. Dashboard Filters
 
-- Container ID
-- Time Range
+The dashboard has three native filters:
 
-The Container ID and Time Range filters were configured with scoped
-application to the relevant container health and time-series visualizations.
-Filter behaviour was checked using a specific container selection.
+1. **Time Range**
+   - Used for telemetry time-series and relevant container monitoring charts.
+   - Commodity charts are excluded from its scope.
+
+2. **Container ID**
+   - Datasource: `STAGING.STG_CONTAINER_TELEMETRY`
+   - Column: `CONTAINER_ID`
+   - Scoped to telemetry charts and relevant container health and quality charts.
+
+3. **Container ID (Latest KPI)**
+   - Datasource: `MARTS.MART_CONTAINER_LATEST`
+   - Column: `CONTAINER_ID`
+   - Scoped to the four top-level KPI cards:
+     - Total Monitored Containers
+     - Average Container Temperature
+     - Average Container Humidity
+     - Average Container Vibration
+
+### Filter validation — 20 November 2026
+
+The two Container ID filters were tested together using `CONT001`.
+
+Verified KPI results:
+
+| KPI | Filtered result |
+|---|---:|
+| Total Monitored Containers | 1 |
+| Average Container Temperature | 8.39 °C |
+| Average Container Humidity | 40.60 %RH |
+| Average Container Vibration | 0.729 g |
+
+The container health overview also displayed only `CONT001`.
+
+After clearing both filters, the dashboard returned to its default values:
+
+| KPI | Default result |
+|---|---:|
+| Total Monitored Containers | 5 |
+| Average Container Temperature | 5.68 °C |
+| Average Container Humidity | 69.38 %RH |
+| Average Container Vibration | 0.617 g |
+
+Both filter configurations persisted after saving and refreshing the dashboard.
+
+The separate KPI filter is necessary because the top KPI charts use
+`MARTS.MART_CONTAINER_LATEST`, whereas the original Container ID filter
+uses `STAGING.STG_CONTAINER_TELEMETRY`.
+
+Commodity panels remained unaffected during the Container ID filter tests.
 
 ## 4. Data Source Notes
 
