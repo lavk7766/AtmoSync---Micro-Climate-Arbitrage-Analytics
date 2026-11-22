@@ -109,14 +109,75 @@ Fields used or inspected include:
 The inspected table did not contain a SENSOR_ID field. Therefore, the
 timestamp-gap indicators are calculated at container level, not sensor level.
 
+### 4.1 Staging and latest-state mart validation — 22 November 2026
+
+The following Snowflake objects were inspected through
+`ATMOSYNC.INFORMATION_SCHEMA.COLUMNS`:
+
+- `ATMOSYNC.STAGING.STG_CONTAINER_TELEMETRY`
+- `ATMOSYNC.MARTS.MART_CONTAINER_LATEST`
+
+Both objects expose the same 13 columns, with matching data types and
+column order:
+
+- Identifiers: `EVENT_ID`, `CONTAINER_ID`
+- Timestamps: `EVENT_TS`, `INGESTED_AT`
+- Telemetry: `TEMPERATURE_C`, `HUMIDITY_PCT`, `VIBRATION_G`
+- Location: `LATITUDE`, `LONGITUDE`
+- Source metadata: `SOURCE_TYPE`, `KAFKA_TOPIC`, `KAFKA_PARTITION`,
+  `KAFKA_OFFSET`
+
+All 13 columns are nullable in both objects.
+
+#### Row-count and identifier validation
+
+| Validation | Staging | Mart |
+|---|---:|---:|
+| Total rows | 105 | 5 |
+| Distinct event IDs | 105 | 5 |
+| Distinct containers | 5 | 5 |
+| Null event IDs | 0 | 0 |
+| Null container IDs | 0 | 0 |
+
+Both objects contain records for five containers. Staging covers
+5 November 2026 10:30:00 UTC through 13 November 2026 07:58:24 UTC.
+The mart covers the latest records at the end of that period.
+
+#### Latest-event correspondence
+
+A per-container `ROW_NUMBER()` query ordered by `EVENT_TS DESC` and
+`INGESTED_AT DESC` was used to identify the latest staging event.
+
+All five mart rows matched:
+- Their corresponding staging `EVENT_ID`.
+- The latest staging `EVENT_ID` for the same `CONTAINER_ID`.
+- The corresponding `EVENT_TS`.
+
+All five `IS_LATEST_EVENT` results were true.
+
+**Dashboard dataset guidance:**
+- Use staging for historical telemetry, time-series charts and timestamp-gap
+  analysis.
+- Use the latest-state mart for one-row-per-container KPI cards and latest
+  container status.
+- Use `CONTAINER_ID` for container-level grouping and filter scoping.
+- `EVENT_ID` is the verified event-level correspondence key for the five
+  mart records inspected.
+- Keep the staging and mart datasets separate in Superset when their
+  different historical and latest-state purposes are sufficient. If a
+  cross-table comparison is required, validate the join cardinality first.
+
+This validation describes the queried data; it does not establish a
+permanent uniqueness constraint or guarantee future mart refresh behaviour.
+
 ## 5. Provisional Sampling-Consistency Calculation
 
-The 14 November prototype classified an observed interval as consistent
-when its duration was between 5 and 10 seconds, inclusive.
+The verified SQL logic classifies an observed interval as consistent
+when its duration is at least 5 seconds and strictly below 10 seconds.
 
-The provisional KPI was calculated as:
+The provisional KPI is calculated as:
 
-`Intervals between 5 and 10 seconds / All observed intervals * 100`
+`Intervals with 5 <= gap_seconds < 10 / All observed intervals * 100`
 
 The observed result was 90%.
 
@@ -125,18 +186,30 @@ range requires team confirmation. Simulator downtime, observation-window
 selection and timestamp tolerance must be considered before finalizing
 a production metric.
 
-## 6. Alert Prototypes
+## 6. Alert Configurations
 
-Two alert configurations were prepared in Superset:
+Three alert configurations were reviewed and executed in Superset:
 
-1. Container Data Quality Alert – configured to check the data-quality
-   percentage against a 100% threshold.
-2. AtmoSync Data Freshness Alert – configured to check whether the age of
-   the latest ingested record exceeds 24 hours.
+1. Container Data Quality Alert – checks the data-quality percentage
+   against a 100% threshold.
+2. AtmoSync Data Freshness Alert – checks whether the age of the latest
+   ingested record exceeds 24 hours.
+3. Coffee Price Spike Alert – checks the configured commodity-price
+   condition using the Snowflake staging source.
 
-These are prototype configurations. Successful scheduled execution and
-email delivery have not yet been verified. Thresholds and notification
-behaviour remain subject to team review.
+### Alert execution and notification validation — 20 November 2026
+
+Three alert configurations were reviewed and executed:
+- Container Data Quality Alert.
+- AtmoSync Data Freshness Alert.
+- Coffee Price Spike Alert.
+
+Gmail SMTP notification delivery was tested and actual email receipt was
+confirmed. The Coffee Price Spike SQL was also corrected to use the verified
+Snowflake staging source and commodity label.
+
+Alert thresholds and notification behaviour remain subject to team review.
+The dashboard is still in Draft status and has not been published.
 
 ## 7. Known Limitations and Pending Validation
 
@@ -146,7 +219,7 @@ behaviour remain subject to team review.
 - Confirm the expected telemetry cadence and acceptable sampling tolerance.
 - Agree on simulator downtime handling.
 - Finalize the data-completeness calculation.
-- Verify alert execution and notification delivery.
+- Review alert thresholds and notification behaviour with the team.
 - Export or otherwise preserve dashboard configuration as a repository
   artifact where the project workflow supports it.
 
