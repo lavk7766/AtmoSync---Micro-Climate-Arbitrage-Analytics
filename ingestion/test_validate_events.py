@@ -49,10 +49,23 @@ GPS_REQUIRED_CASES = [
     ("latitude as text", with_change(latitude="north"), "not numeric: latitude"),
     ("longitude as text", with_change(longitude="east"), "not numeric: longitude"),
     ("latitude null", with_change(latitude=None), "missing field: latitude"),
-    ("latitude NaN", with_change(latitude=float("nan")), "NaN"),
+    ("latitude NaN", with_change(latitude=float("nan")), "not finite"),
     ("boundary values 90 and -180 accepted", with_change(latitude=90, longitude=-180), None),
     ("humidity 150 still rejected", with_change(humidity_pct=150), "humidity_pct outside"),
     ("container_id missing still rejected", with_change(container_id=MISSING), "container_id"),
+]
+EDGE_CASES = [
+    ("temperature NaN", with_change(temperature_c=float("nan")), "not finite"),
+    ("GPS Infinity", with_change(latitude=float("inf")), "not finite"),
+    ("humidity NaN", with_change(humidity_pct=float("nan")), "not finite"),
+    ("humidity below zero", with_change(humidity_pct=-1), "outside 0-100"),
+    ("humidity above 100", with_change(humidity_pct=101), "outside 0-100"),
+    ("vibration Infinity", with_change(vibration_g=float("inf")), "not finite"),
+    ("GPS Infinity", with_change(latitude=float("inf")), "not finite"),
+    ("timestamp without timezone", with_change(timestamp="2026-11-22T10:30:00"), "timezone"),
+    ("timestamp UTC", with_change(timestamp="2026-11-22T10:30:00Z"), None),
+    ("timestamp with offset", with_change(timestamp="2026-11-22T16:00:00+05:30"), None),
+    ("vibration Infinity", with_change(vibration_g=float("inf")), "not finite"),
 ]
 
 GPS_OPTIONAL_CASES = [
@@ -79,8 +92,10 @@ def main():
     loader.GPS_REQUIRED = False
     print("\nGPS optional:")
     failures += run(GPS_OPTIONAL_CASES)
+    print("\nAdditional edge cases:")
+    failures += run(EDGE_CASES)
 
-    total = len(GPS_REQUIRED_CASES) + len(GPS_OPTIONAL_CASES)
+    total = len(GPS_REQUIRED_CASES) + len(GPS_OPTIONAL_CASES) + len(EDGE_CASES)
     print(f"\n{total - failures} of {total} checks passed")
     return 1 if failures else 0
 

@@ -14,6 +14,7 @@ Usage:
 import argparse
 import json
 import logging
+import math
 import os
 import sys
 import time
@@ -43,8 +44,9 @@ logging.basicConfig(
 log = logging.getLogger("loader")
 
 
+
 def validate(event):
-    """Return None if the event is valid, otherwise a short error string."""
+    """Return None for valid events, otherwise an error message."""
     if not isinstance(event, dict):
         return "event is not a JSON object"
 
@@ -54,32 +56,48 @@ def validate(event):
             return f"missing or empty field: {field}"
 
     try:
-        datetime.fromisoformat(event["timestamp"].replace("Z", "+00:00"))
+        parsed_ts = datetime.fromisoformat(
+            event["timestamp"].replace("Z", "+00:00")
+        )
+        if parsed_ts.tzinfo is None or parsed_ts.utcoffset() is None:
+            return "timestamp must include timezone"
     except ValueError:
         return "timestamp is not a valid ISO 8601 value"
 
     for field in REQUIRED_NUMERIC_FIELDS:
         value = event.get(field)
+
         if isinstance(value, bool) or not isinstance(value, (int, float)):
             return f"field is not numeric: {field}"
 
-        if not 0 <= event["humidity_pct"] <= 100:
-                return "humidity_pct outside 0-100"
+        if not math.isfinite(value):
+            return f"field is not finite: {field}"
 
-    for name, low, high in (("latitude", -90, 90), ("longitude", -180, 180)):
+    if not 0 <= event["humidity_pct"] <= 100:
+        return "humidity_pct outside 0-100"
+
+    for name, low, high in (
+        ("latitude", -90, 90),
+        ("longitude", -180, 180),
+    ):
         value = event.get(name)
+
         if value is None:
             if GPS_REQUIRED:
                 return f"missing field: {name}"
             continue
+
         if isinstance(value, bool) or not isinstance(value, (int, float)):
             return f"field is not numeric: {name}"
-        if value != value:  # NaN
-            return f"{name} is NaN"
+
+        if not math.isfinite(value):
+            return f"{name} is not finite"
+
         if not low <= value <= high:
             return f"{name} outside {low} to {high}"
 
     return None
+
 
 
 def reject(raw_value, reason):
