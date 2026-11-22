@@ -132,17 +132,44 @@ def check_connection():
         conn.close()
 
 
+
 def insert_batch(conn, rows):
-    """rows: list of (json_string, topic, partition, offset)."""
+    """Insert Kafka messages, skipping existing topic/partition/offset."""
+    if not rows:
+        return
+
+    # Remove duplicate Kafka coordinates within the current batch.
+    unique_rows = {}
+    for json_string, topic, partition, offset in rows:
+        unique_rows[(topic, partition, offset)] = (
+            json_string, topic, partition, offset
+        )
+
+    rows = list(unique_rows.values())
+
     placeholders = ",".join(["(%s,%s,%s,%s)"] * len(rows))
+
     sql = (
-        "INSERT INTO RAW_CONTAINER_TELEMETRY "
-        "(EVENT_PAYLOAD, KAFKA_TOPIC, KAFKA_PARTITION, KAFKA_OFFSET) "
-        "SELECT PARSE_JSON(column1), column2, column3, column4 "
+        "MERGE INTO RAW_CONTAINER_TELEMETRY AS target "
+        "USING ("
+        "SELECT PARSE_JSON(column1) AS event_payload, "
+        "column2 AS kafka_topic, "
+        "column3 AS kafka_partition, "
+        "column4 AS kafka_offset "
         f"FROM VALUES {placeholders}"
+        ") AS source "
+        "ON target.KAFKA_TOPIC = source.kafka_topic "
+        "AND target.KAFKA_PARTITION = source.kafka_partition "
+        "AND target.KAFKA_OFFSET = source.kafka_offset "
+        "WHEN NOT MATCHED THEN "
+        "INSERT (EVENT_PAYLOAD, KAFKA_TOPIC, KAFKA_PARTITION, KAFKA_OFFSET) "
+        "VALUES (source.event_payload, source.kafka_topic, "
+        "source.kafka_partition, source.kafka_offset)"
     )
+
     params = [item for row in rows for item in row]
     conn.cursor().execute(sql, params)
+
 
 
 def insert_with_retry(conn, rows):
