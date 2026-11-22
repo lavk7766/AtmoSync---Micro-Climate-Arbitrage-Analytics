@@ -185,3 +185,67 @@ The local product-aware simulator-to-Kafka integration was verified:
 - The Snowflake loader accepted all ten events in dry-run mode.
 
 Coordinator approval and live Snowflake integration remain pending.
+
+## 12. Supplemental Verification — 21 November 2026
+
+### 12.1 Independent Reference CSV Validation
+
+Manash's original validation scripts were retrieved from `origin/manash`
+and executed against temporary copies of the local reference CSV files.
+
+Container metadata validator:
+- Total containers: 5
+- Unique containers: 5
+- Available product references: 20
+- Validation errors: 0
+- Exit code: 0
+- Result: PASSED
+
+Product reference validator:
+- Total products: 20
+- Unique products: 20
+- Validation errors: 0
+- Exit code: 0
+- Result: PASSED
+
+Both scripts ran successfully without modifying the original CSV files.
+
+Coordinator approval remains pending.
+
+### 12.2 Independent Route-to-Metadata Audit
+
+A separate read-only route audit compared the five container metadata
+records against the route definitions in `simulator/routes.py`.
+
+| Container | Route | Mode | Waypoints | Calculated distance |
+|---|---|---|---:|---:|
+| CONT001 | Delhi to Lucknow | Road | 4874 | 534.01 km |
+| CONT002 | Mumbai to Solapur | Rail | 3 | 357.01 km |
+| CONT003 | Bengaluru to Kurnool | Road | 3 | 678.79 km |
+| CONT004 | Kolkata to Patna | Rail | 3 | 575.06 km |
+| CONT005 | Mumbai to Mangaluru | Sea | 6 | 906.50 km |
+
+Results:
+- Metadata container IDs matched all five route definitions.
+- Origin and destination assignments matched.
+- All five transport modes were configured.
+- Route coordinates passed geographic range checks.
+- Starting and ending coordinate gaps were 0.00 km for all five routes.
+- Initial simulator positions matched route starting coordinates.
+- All five calculated route distances were positive and finite.
+
+Result: PASSED.
+
+Route qualification:
+CONT001 uses a generated OpenStreetMap-derived road route.
+CONT002 through CONT005 use illustrative waypoint routes and
+straight-line interpolation. Their calculated distances are not
+verified network travel distances.
+
+### 12.3 Supplemental Conclusion
+
+The reference-data validation and route-to-metadata consistency
+checks passed independently.
+
+The reference CSVs remain subject to coordinator approval.
+No live Snowflake insertion or dbt execution was performed.
