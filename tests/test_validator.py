@@ -1,3 +1,4 @@
+import pytest
 from simulator.event_builder import build_sensor_event, event_to_dict
 from simulator.container_generator import create_containers
 from simulator.data_validator import validate_event
@@ -68,3 +69,38 @@ def test_non_numeric_coordinates_fail_validation():
 
     assert is_valid is False
     assert "latitude" in message
+@pytest.mark.parametrize(
+    "temperature",
+    [
+        -0.55,  # Apple
+        13.65,  # Banana
+        14.41,  # Tomato
+        9.0,    # Injected Apple temperature fault
+    ],
+)
+def test_product_specific_temperatures_pass_validation(temperature):
+    event = event_to_dict(build_sensor_event(create_containers()[0]))
+    event["temperature_c"] = temperature
+
+    is_valid, message = validate_event(event)
+
+    assert is_valid is True
+    assert message == "Event is valid"
+
+
+@pytest.mark.parametrize(
+    "temperature",
+    [
+        float("nan"),
+        float("inf"),
+        float("-inf"),
+    ],
+)
+def test_non_finite_temperature_fails_validation(temperature):
+    event = event_to_dict(build_sensor_event(create_containers()[0]))
+    event["temperature_c"] = temperature
+
+    is_valid, message = validate_event(event)
+
+    assert is_valid is False
+    assert "finite number" in message
