@@ -170,6 +170,93 @@ All five `IS_LATEST_EVENT` results were true.
 This validation describes the queried data; it does not establish a
 permanent uniqueness constraint or guarantee future mart refresh behaviour.
 
+### 4.2 Live Snowflake and dashboard validation — 23 November 2026
+
+Superset services were restarted and verified healthy. A live SQL query
+through Superset SQL Lab successfully accessed the Snowflake staging and
+mart objects.
+
+#### Live row-count and identifier validation
+
+| Validation | Staging | Mart |
+|---|---:|---:|
+| Total rows | 111 | 5 |
+| Distinct event IDs | 111 | 5 |
+| Distinct containers | 8 | 5 |
+| Null event IDs | 0 | 0 |
+| Null container IDs | 0 | 0 |
+| Duplicate event rows | 0 | 0 |
+
+A per-container latest-event comparison found that all five mart records
+matched the latest staging event for their respective containers.
+
+Three additional staging containers were absent from the mart:
+- TEST_LIVE_001 — synthetic_simulated; topic
+  atmosync_ingestion_test_20261122.
+- TEST_MERGE_002 — synthetic_simulated; topic
+  atmosync_ingestion_test_20261122.
+- TEST_SPOILAGE_001 — synthetic_test; topic
+  spoilage_integration_test.
+
+These records are labelled as synthetic test/integration data. Their
+exclusion from the mart may be intentional, but the filtering rule and
+intended mart scope require confirmation from the data owner.
+
+#### Ingestion freshness validation
+
+The latest mart ingestion was 13 November 2026 00:13:06.608 UTC,
+with a query-reported age of 244.35 hours.
+
+Source/topic inspection returned:
+- container_sensor_telemetry: 100 rows; latest ingestion age
+  approximately 244.33 hours.
+- atmosync_ingestion_test_20261122: 2 rows; approximately 21.55 hours.
+- spoilage_integration_test: 4 rows; approximately 20.35 hours.
+- sample: 5 rows; approximately 434.78 hours.
+
+All inspected source groups were labelled synthetic_simulated or
+synthetic_test. Recent test-topic ingestion does not establish that fresh
+production telemetry is flowing.
+
+#### Mart uniqueness checks
+
+The mart contained five rows, five distinct event IDs and five distinct
+containers. A GROUP BY CONTAINER_ID query with HAVING COUNT(*) > 1
+returned no rows.
+
+No duplicate event IDs were detected in staging or mart. These results
+describe the current snapshot only; they do not establish a permanent
+uniqueness constraint or guarantee future refresh behaviour.
+
+#### Dashboard refresh and Draft review
+
+The AtmoSync Container Monitoring Dashboard remained in Draft status
+and was not published.
+
+A manual dashboard refresh produced the following comparison:
+
+| Metric | Before refresh | After refresh |
+|---|---:|---:|
+| Top monitored containers | 5 | 5 |
+| Lower monitored containers | 8 | 8 |
+| Data quality | 100% | 100% |
+| Data freshness | 243.87 hours | 243.97 hours |
+| Active containers (24h) | 3 | 3 |
+| Sampling consistency | 89.32% | 89.32% |
+
+The freshness value advanced by 0.10 hours; the other listed values
+remained unchanged. This confirms the displayed values after a manual
+refresh, but does not demonstrate ingestion of new production telemetry.
+
+The dashboard displays both five-container latest-state KPIs and
+eight-container staging-related KPIs. Their different dataset scopes
+must be made explicit to dashboard users.
+
+Additional review items include synthetic test records visible in
+telemetry charts, the freshness KPI source/filter definition, quality
+metric definition, sampling threshold approval and commodity chart
+configuration.
+
 ## 5. Provisional Sampling-Consistency Calculation
 
 The verified SQL logic classifies an observed interval as consistent
@@ -220,6 +307,20 @@ The dashboard is still in Draft status and has not been published.
 - Agree on simulator downtime handling.
 - Finalize the data-completeness calculation.
 - Review alert thresholds and notification behaviour with the team.
+- Confirm whether synthetic test/integration topics should be excluded
+  from production-facing dashboard charts and the latest-state mart.
+- Investigate the mart refresh schedule and why its latest ingestion remains
+  at 13 November 2026 despite later test-topic ingestion.
+- Confirm the freshness KPI source, filters and expected production-data
+  scope.
+- Confirm one-row-per-container uniqueness and event-ID deduplication
+  guarantees across future mart refreshes.
+- Clarify the different five-container mart and eight-container staging
+  KPI scopes in dashboard labels and descriptions.
+- Approve data-quality metric definitions, sampling thresholds, cadence,
+  downtime handling and alert thresholds.
+- Review dashboard charts, filters and commodity comparisons with the team.
+- Obtain approval before publishing the Draft dashboard.
 - Export or otherwise preserve dashboard configuration as a repository
   artifact where the project workflow supports it.
 
