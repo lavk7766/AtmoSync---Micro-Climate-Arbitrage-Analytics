@@ -37,3 +37,11 @@ TEMPERATURE_FAULT_DURATION_SECONDS = 30.0
 # Inject a high-temperature excursion above the product's
 # recommended maximum, rather than hard-coding a product limit.
 TEMPERATURE_FAULT_OFFSET_C = 5.0
+
+# Optional scheduled humidity fault injection.
+# Disabled by default to preserve ordinary simulator behavior.
+HUMIDITY_FAULT_ENABLED = False
+HUMIDITY_FAULT_CONTAINER_ID = "CONT001"
+HUMIDITY_FAULT_START_DELAY_SECONDS = 10.0
+HUMIDITY_FAULT_DURATION_SECONDS = 30.0
+HUMIDITY_FAULT_VALUE_PCT = 75.0

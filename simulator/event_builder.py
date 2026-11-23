@@ -16,6 +16,7 @@ def build_sensor_event(
     container_id,
     product_reference=None,
     fault_injector=None,
+    humidity_fault_injector=None,
 ):
     # Use exactly the same timestamp for the event and fault evaluation.
     event_timestamp = simulation_clock.now()
@@ -25,6 +26,7 @@ def build_sensor_event(
         container_id=container_id,
         timestamp=event_timestamp,
         fault_injector=fault_injector,
+        humidity_fault_injector=humidity_fault_injector,
     )
 
     latitude, longitude = location_simulator.get_current_location(

@@ -8,6 +8,7 @@ from simulator.config import (
 )
 from simulator.product_reference import ProductReference
 from simulator.temperature_fault_injector import TemperatureFaultInjector
+from simulator.humidity_fault_injector import HumidityFaultInjector
 
 
 def _round_within_range(value, minimum, maximum, decimals=2):
@@ -68,6 +69,7 @@ def generate_sensor_readings(
     container_id=None,
     timestamp=None,
     fault_injector=None,
+    humidity_fault_injector=None,
 ):
     """
     Generate sensor readings with optional product references
@@ -102,6 +104,31 @@ def generate_sensor_readings(
 
         if override is not None:
             temperature = override
+
+    if humidity_fault_injector is not None:
+        if not isinstance(humidity_fault_injector, HumidityFaultInjector):
+            raise TypeError(
+                "humidity_fault_injector must be a HumidityFaultInjector"
+            )
+
+        if container_id is None:
+            raise ValueError(
+                "container_id is required when humidity fault injection is enabled"
+            )
+
+        if timestamp is None:
+            raise ValueError(
+                "timestamp is required when humidity fault injection is enabled"
+            )
+
+        override = humidity_fault_injector.get_humidity_override(
+            container_id,
+            timestamp,
+            product_reference,
+        )
+
+        if override is not None:
+            humidity = override
 
     return {
         "temperature_c": temperature,
