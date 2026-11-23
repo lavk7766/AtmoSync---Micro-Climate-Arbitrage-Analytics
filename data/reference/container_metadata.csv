@@ -1,0 +1,6 @@
+﻿container_id,product_name,quantity,quantity_unit,origin,destination,batch_id,source_type
+CONT001,Apple,1000,kg,Delhi,Lucknow,BATCH001,synthetic_simulated
+CONT002,Banana,1000,kg,Mumbai,Solapur,BATCH002,synthetic_simulated
+CONT003,Orange,800,kg,Bengaluru,Kurnool,BATCH003,synthetic_simulated
+CONT004,Tomato,500,kg,Kolkata,Patna,BATCH004,synthetic_simulated
+CONT005,Strawberry,300,kg,Mumbai,Mangaluru,BATCH005,synthetic_simulated

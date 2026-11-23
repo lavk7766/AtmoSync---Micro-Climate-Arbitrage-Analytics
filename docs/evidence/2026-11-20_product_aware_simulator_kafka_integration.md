@@ -1,9 +1,9 @@
-﻿# Product-Aware Simulator and Kafka Integration Evidence
+# Product-Aware Simulator and Kafka Integration Evidence
 
 **Project:** AtmoSync – Micro-Climate Arbitrage Analytics
 **Execution date:** 20 November 2026
 **Branch:** Aditya-Singh-Bisht
-**Status:** Local integration verification passed; coordinator approval pending.
+**Status:** Local integration verification passed; coordinator approved prototype/simulation and integration-testing use on 23 November 2026. Production thresholds are not approved.
 
 ## 1. Objective
 
@@ -35,7 +35,7 @@ Reported validation results:
 - All five container products matched to a product reference.
 
 **Approval qualification:** The container metadata review document
-states that coordinator approval is pending. The product reference
+records the earlier pending status; coordinator approval for prototype/simulation and integration testing was subsequently granted on 23 November 2026. The product reference
 document identifies its thresholds as unverified prototype assumptions.
 These values are used for integration testing and are not represented
 as independently verified food-safety limits.
@@ -159,8 +159,8 @@ rail or maritime network routes.
 
 ## 10. Outstanding Work and Limitations
 
-1. Obtain Lav's approval of the container-to-product assignments.
-2. Confirm the product reference values and their intended use.
+1. Prototype/simulation and integration-testing use of the five assignments was approved by Lav on 23 November 2026.
+2. Product thresholds remain prototype assumptions and are not approved as production food-safety limits.
 3. Complete actual Snowflake authentication and insertion.
 4. Execute dbt models and tests against the live Snowflake environment.
 5. Complete the final integration handoff.
@@ -184,7 +184,7 @@ The local product-aware simulator-to-Kafka integration was verified:
   and consumed.
 - The Snowflake loader accepted all ten events in dry-run mode.
 
-Coordinator approval and live Snowflake integration remain pending.
+Coordinator approval for prototype/simulation and integration testing has been received; live Snowflake integration remains pending.
 
 ## 12. Supplemental Verification — 21 November 2026
 
@@ -210,7 +210,7 @@ Product reference validator:
 
 Both scripts ran successfully without modifying the original CSV files.
 
-Coordinator approval remains pending.
+Coordinator approval was received on 23 November 2026 for prototype/simulation and integration testing only; production use is not approved.
 
 ### 12.2 Independent Route-to-Metadata Audit
 
@@ -247,5 +247,35 @@ verified network travel distances.
 The reference-data validation and route-to-metadata consistency
 checks passed independently.
 
-The reference CSVs remain subject to coordinator approval.
+The reference CSVs are approved for prototype/simulation and integration testing only; their thresholds are not approved for production use.
 No live Snowflake insertion or dbt execution was performed.
+
+## 13. Coordinator Decision — 23 November 2026
+
+Coordinator Lav Kumar reviewed the submitted integration evidence and
+confirmed the following decisions:
+
+- All five container-to-product assignments are approved for
+  prototype/simulation and integration testing.
+- All 20 product references are approved for prototype/simulation
+  and integration testing.
+- Product temperature thresholds remain prototype assumptions and
+  are not approved as production food-safety limits.
+- CONT002 through CONT005 illustrative waypoint routes are accepted
+  for simulation, provided they remain clearly labelled illustrative.
+- The coordinator reviewed the submitted evidence but did not
+  independently rerun the full Python test suite.
+
+Remaining technical work:
+
+1. Implement and validate explicit product-threshold violation
+   detection and spoilage-risk calculations.
+2. Complete actual Kafka-to-Snowflake insertion after secure access
+   is arranged.
+3. Execute dbt models and tests against the live Snowflake database.
+4. Complete the final integration handoff.
+
+The existing 170 passing Python tests establish the tested event
+validation and simulator behavior. They do not establish complete
+spoilage-risk validation or production suitability of the reference
+thresholds.
