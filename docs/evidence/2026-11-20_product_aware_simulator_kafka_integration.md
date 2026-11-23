@@ -279,3 +279,66 @@ The existing 170 passing Python tests establish the tested event
 validation and simulator behavior. They do not establish complete
 spoilage-risk validation or production suitability of the reference
 thresholds.
+
+## 14. Supplemental Simulator Tests — 23 November 2026
+
+Added `tests/test_spoilage.py` to provide deterministic telemetry fixtures
+for downstream spoilage-risk model validation.
+
+### 14.1 Controlled Telemetry Intervals
+
+The tests use the existing event builder and controlled timestamps to
+generate two-event sequences with the following intervals:
+
+| Interval | Scenario |
+|---:|---|
+| 5 seconds | Regular telemetry |
+| 15 seconds | Observed-interval upper boundary |
+| 16 seconds | First interval classified as unknown by the reviewed dbt logic |
+| 60 seconds | Longer interval classified as unknown by the reviewed dbt logic |
+
+The tests verify the generated timestamps, interval differences, unique
+event IDs and product-specific normal temperature and humidity ranges.
+
+### 14.2 Temperature Fault Boundary Sequence
+
+A scheduled high-temperature fault was tested using an Apple prototype
+reference with a recommended temperature range of -1°C to 4°C.
+
+- Fault start: 10:00:05 UTC.
+- Fault end: 10:00:20 UTC.
+- Injected temperature: 9°C.
+- Events were generated at five-second intervals.
+- The injected temperature was present at the start of the fault and
+  during the fault window.
+- Normal product-specific temperature generation resumed at the
+  end-exclusive fault boundary.
+- All events retained the existing nine-field telemetry schema.
+
+### 14.3 Test Results
+
+Focused test file:
+
+`tests/test_spoilage.py`
+
+Result: 5 passed.
+
+Full Python test suite:
+
+Result: 175 passed in 2.39 seconds.
+
+The previous baseline was 170 passing tests. The five additional tests
+increased the suite total to 175.
+
+### 14.4 Scope and Limitations
+
+These tests verify simulator-side event generation, controlled timestamp
+intervals and scheduled temperature fault behavior.
+
+They do not execute the dbt spoilage-risk mart, validate its cumulative
+ageing formula, or establish scientifically validated remaining shelf
+life. No live Kafka-to-Snowflake insertion or live dbt execution was
+performed as part of these tests.
+
+The product reference thresholds and spoilage assumptions remain
+approved for prototype/simulation and integration testing only.
