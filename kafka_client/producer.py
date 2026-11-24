@@ -12,7 +12,12 @@ from kafka_client.kafka_config import (
 
 class TelemetryProducer:
 
-    def __init__(self):
+    def __init__(self, topic=TELEMETRY_TOPIC):
+        if not isinstance(topic, str) or not topic.strip():
+            raise ValueError("Kafka topic must be a non-empty string")
+
+        self.topic = topic
+
         self.producer = KafkaProducer(
             bootstrap_servers=BOOTSTRAP_SERVERS,
             value_serializer=JsonSerializer(),
@@ -23,7 +28,7 @@ class TelemetryProducer:
 
     def send_event(self, event):
         future = self.producer.send(
-            topic=TELEMETRY_TOPIC,
+            topic=self.topic,
             key=event["container_id"],
             value=event,
         )

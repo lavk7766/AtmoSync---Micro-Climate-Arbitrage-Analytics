@@ -46,6 +46,51 @@ def test_producer_initializes_with_configured_settings(monkeypatch):
     }
 
 
+def test_producer_uses_custom_topic(monkeypatch):
+    fake_kafka_client = MagicMock()
+    future = MagicMock()
+    future.get.return_value = "metadata"
+
+    fake_kafka_client.send.return_value = future
+
+    monkeypatch.setattr(
+        producer_module,
+        "KafkaProducer",
+        lambda **kwargs: fake_kafka_client,
+    )
+
+    monkeypatch.setattr(
+        producer_module,
+        "JsonSerializer",
+        lambda: object(),
+    )
+
+    monkeypatch.setattr(
+        producer_module,
+        "DefaultSerializer",
+        lambda: object(),
+    )
+
+    custom_topic = "atmosync_test_delayed_events"
+
+    producer = producer_module.TelemetryProducer(
+        topic=custom_topic
+    )
+
+    event = {
+        "event_id": "delayed-event-001",
+        "container_id": "CONT001",
+    }
+
+    producer.send_event(event)
+
+    fake_kafka_client.send.assert_called_once_with(
+        topic=custom_topic,
+        key="CONT001",
+        value=event,
+    )
+
+
 def test_send_event_uses_container_id_as_message_key():
     fake_kafka_client = MagicMock()
     future = MagicMock()
@@ -58,6 +103,7 @@ def test_send_event_uses_container_id_as_message_key():
         producer_module.TelemetryProducer
     )
     producer.producer = fake_kafka_client
+    producer.topic = producer_module.TELEMETRY_TOPIC
 
     event = {
         "event_id": "test-event-001",
@@ -90,6 +136,7 @@ def test_send_event_propagates_broker_errors():
         producer_module.TelemetryProducer
     )
     producer.producer = fake_kafka_client
+    producer.topic = producer_module.TELEMETRY_TOPIC
 
     event = {
         "event_id": "test-event-002",
@@ -107,6 +154,7 @@ def test_send_event_rejects_missing_container_id():
         producer_module.TelemetryProducer
     )
     producer.producer = fake_kafka_client
+    producer.topic = producer_module.TELEMETRY_TOPIC
 
     event = {
         "event_id": "test-event-003",

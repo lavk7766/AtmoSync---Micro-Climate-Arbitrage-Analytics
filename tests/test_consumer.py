@@ -30,6 +30,80 @@ def create_mock_consumer(batches):
     consumer = MagicMock()
     consumer.poll.side_effect = batches
     return consumer
+def test_create_consumer_uses_custom_topic(monkeypatch):
+    custom_topic = "atmosync_test_delayed_events"
+
+    captured = {}
+    fake_consumer = MagicMock()
+
+    def fake_kafka_consumer(*args, **kwargs):
+        captured["args"] = args
+        captured["kwargs"] = kwargs
+        return fake_consumer
+
+    monkeypatch.setattr(
+        consumer_module,
+        "KafkaConsumer",
+        fake_kafka_consumer,
+    )
+
+    result = consumer_module.create_consumer(
+        group_id="delayed-event-test-group",
+        auto_offset_reset="earliest",
+        topic=custom_topic,
+    )
+
+    assert result is fake_consumer
+    assert captured["args"] == (custom_topic,)
+    assert captured["kwargs"]["group_id"] == "delayed-event-test-group"
+    assert captured["kwargs"]["auto_offset_reset"] == "earliest"
+
+
+def test_consume_messages_uses_custom_topic(
+    monkeypatch, capsys
+):
+    custom_topic = "atmosync_test_delayed_events"
+
+    message = create_test_message(
+        10,
+        b'{"event_id": "delayed-001", "container_id": "CONT001"}',
+    )
+    message.topic = custom_topic
+
+    mock_consumer = create_mock_consumer([
+        create_batch([message])
+    ])
+
+    factory = MagicMock(return_value=mock_consumer)
+
+    monkeypatch.setattr(
+        consumer_module,
+        "create_consumer",
+        factory,
+    )
+
+    consumer_module.consume_messages(
+        max_messages=1,
+        group_id="delayed-event-test-group",
+        topic=custom_topic,
+    )
+
+    factory.assert_called_once_with(
+        "delayed-event-test-group",
+        consumer_module.AUTO_OFFSET_RESET,
+        topic=custom_topic,
+    )
+
+    expected_partition = TopicPartition(custom_topic, 0)
+
+    mock_consumer.commit.assert_called_once_with({
+        expected_partition: OffsetAndMetadata(11, "", -1)
+    })
+
+    output = capsys.readouterr().out
+
+    assert f"Listening to topic: {custom_topic}" in output
+    assert "Messages processed: 1" in output
 
 
 def test_valid_message_is_processed_and_committed(

@@ -19,9 +19,13 @@ from kafka_client.kafka_config import (
 def create_consumer(
     group_id=CONSUMER_GROUP_ID,
     auto_offset_reset=AUTO_OFFSET_RESET,
+    topic=TELEMETRY_TOPIC,
 ):
+    if not isinstance(topic, str) or not topic.strip():
+        raise ValueError("Kafka topic must be a non-empty string")
+
     return KafkaConsumer(
-        TELEMETRY_TOPIC,
+        topic,
         bootstrap_servers=BOOTSTRAP_SERVERS,
         group_id=group_id,
         auto_offset_reset=auto_offset_reset,
@@ -85,7 +89,12 @@ def consume_messages(
     reconnect_backoff_seconds=1.0,
     max_reconnect_backoff_seconds=30.0,
     poll_timeout_ms=1000,
+    topic=TELEMETRY_TOPIC,
 ):
+
+    if not isinstance(topic, str) or not topic.strip():
+        raise ValueError("Kafka topic must be a non-empty string")
+
     if max_messages is not None and max_messages <= 0:
         raise ValueError("max_messages must be greater than zero")
 
@@ -108,7 +117,7 @@ def consume_messages(
     consumer = None
     stop_requested = False
 
-    print(f"Listening to topic: {TELEMETRY_TOPIC}")
+    print(f"Listening to topic: {topic}")
     print(f"Consumer group: {group_id}")
     print("Press CTRL+C to stop.\n")
 
@@ -119,6 +128,7 @@ def consume_messages(
                     consumer = create_consumer(
                         group_id,
                         auto_offset_reset,
+                        topic=topic,
                     )
 
                 records = consumer.poll(
