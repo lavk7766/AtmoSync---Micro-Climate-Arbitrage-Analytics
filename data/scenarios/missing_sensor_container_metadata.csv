@@ -1,0 +1,4 @@
+﻿container_id,product_name,quantity,quantity_unit,origin,destination,batch_id,source_type
+TEST_MISSING_TEMP_001,Apple,100,kg,TEST_ORIGIN,TEST_DESTINATION,TESTBATCH001,synthetic_test_fixture
+TEST_MISSING_HUM_001,Apple,100,kg,TEST_ORIGIN,TEST_DESTINATION,TESTBATCH002,synthetic_test_fixture
+TEST_LONG_GAP_001,Apple,100,kg,TEST_ORIGIN,TEST_DESTINATION,TESTBATCH003,synthetic_test_fixture
