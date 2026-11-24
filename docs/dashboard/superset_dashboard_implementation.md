@@ -257,6 +257,115 @@ telemetry charts, the freshness KPI source/filter definition, quality
 metric definition, sampling threshold approval and commodity chart
 configuration.
 
+### 4.3 Live freshness, filtering and uniqueness validation — 24 November 2026
+
+Superset services were restarted and verified healthy. Live SQL queries
+through Superset SQL Lab successfully accessed the Snowflake staging and
+latest-state mart tables.
+
+#### Live freshness and row-count validation
+
+| Metric | Staging | Mart |
+|---|---:|---:|
+| Total rows | 111 | 5 |
+| Distinct event IDs | 111 | 5 |
+| Distinct containers | 8 | 5 |
+| Latest event timestamp | 22 Nov 2026 15:00:20 UTC | 13 Nov 2026 07:58:24 UTC |
+| Latest ingestion timestamp | 22 Nov 2026 08:12:10.512 | 13 Nov 2026 00:13:06.608 |
+| Ingestion age at query time | 36.53 hours | 260.52 hours |
+
+The mart's latest ingestion remains on 13 November, while staging contains
+later records. The mart ingestion age was approximately 224 hours greater
+than the staging ingestion age at query time. The cause and expected refresh
+schedule remain unconfirmed.
+
+#### Source and synthetic-data inspection
+
+All 111 staging rows were grouped into four source/topic combinations:
+
+| Source type | Kafka topic | Rows | Containers | Latest ingestion |
+|---|---|---:|---:|---|
+| synthetic_test | spoilage_integration_test | 4 | 1 | 22 Nov 2026 08:12:10.512 |
+| synthetic_simulated | atmosync_ingestion_test_20261122 | 2 | 2 | 22 Nov 2026 07:00:18.033 |
+| synthetic_simulated | container_sensor_telemetry | 100 | 5 | 13 Nov 2026 00:13:06.608 |
+| synthetic_simulated | sample | 5 | 3 | 5 Nov 2026 01:46:11.198 |
+
+All inspected staging records are labelled synthetic_test or
+synthetic_simulated. No production-labelled source was present in this
+query result. This does not establish whether production ingestion exists
+outside these inspected tables.
+
+The mart contains only CONT001–CONT005, all from
+synthetic_simulated / container_sensor_telemetry, with one row per
+container. The three additional test containers in staging are not in
+the mart. The intended filtering policy still requires data-owner
+confirmation.
+
+#### Event and container uniqueness checks
+
+| Check | Staging | Mart |
+|---|---:|---:|
+| Total rows | 111 | 5 |
+| Distinct event IDs | 111 | 5 |
+| Duplicate event rows | 0 | 0 |
+
+A GROUP BY CONTAINER_ID query with HAVING COUNT(*) > 1 returned no rows
+for the mart. The current snapshot therefore has one row per mart
+container and no duplicate event IDs in either dataset. These checks do
+not establish permanent uniqueness constraints or future refresh guarantees.
+
+#### Dashboard filter and KPI scope validation
+
+The Draft dashboard exposed:
+- Container ID filter: 8 selectable containers.
+- Container ID (Latest KPI) filter: 5 selectable containers.
+
+The three test IDs TEST_LIVE_001, TEST_MERGE_002 and TEST_SPOILAGE_001
+were selectable in the general Container ID filter, but not in the
+five-option latest KPI filter.
+
+With TEST_MERGE_002 selected:
+- The top latest-state Total Monitored Containers KPI remained 5.
+- The lower staging-related Total Monitored Containers KPI changed
+  from 8 to 1.
+- The telemetry charts reflected the selected test container.
+- The Container Health Overview returned no rows.
+
+After clearing the selection:
+- The top KPI returned/remained at 5.
+- The lower KPI returned to 8.
+- The Container Health Overview displayed CONT001–CONT005 again.
+
+This confirms different filter and dataset scopes across dashboard
+components. Synthetic test records are accessible through the general
+telemetry filter and can affect staging-based visualizations.
+
+#### Dashboard refresh validation
+
+The dashboard remained in Draft status. The following values were
+observed during the 24 November review:
+
+| Metric | Observed value |
+|---|---:|
+| Top monitored containers | 5 |
+| Lower monitored containers (unfiltered) | 8 |
+| Data freshness in SQL query | 260.52 hours |
+| Data freshness displayed on dashboard | 260.58 to 260.75 hours |
+| Container data quality | 100% |
+| Active containers (last 24 hours) | 0 |
+| Telemetry sampling consistency | 89.32% |
+
+The freshness value advanced between SQL and dashboard observations.
+Manual refresh and filter reset restored the unfiltered dashboard
+presentation, but did not demonstrate new mart ingestion. The active
+container KPI remained zero. The exact freshness KPI SQL, its source and
+filter scope, and the scheduled mart refresh behaviour remain to be
+confirmed.
+
+The current data-quality and sampling-consistency values are recorded
+as observed dashboard outputs; their definitions and thresholds still
+require team approval.
+
 ## 5. Provisional Sampling-Consistency Calculation
 
 The verified SQL logic classifies an observed interval as consistent
