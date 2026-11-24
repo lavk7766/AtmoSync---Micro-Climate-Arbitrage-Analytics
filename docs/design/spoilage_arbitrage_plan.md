@@ -338,3 +338,56 @@ All tests are planned and have not yet been executed.
 - The single warning is expected because the DEV_PLACEHOLDER record is still present.
 - Evidence: docs/evidence/2026-11-13_dbt_run.txt and docs/evidence/2026-11-13_dbt_test.txt.
 - The placeholder is for development validation only and must not be treated as real shipment data.
+
+## Validation Update - 2026-11-24
+
+### Live Kafka-to-Snowflake Ingestion
+
+- Test topic: atmosync_ingestion_test_20261124
+- Event ID: TEST_LIVE_20261124_001
+- Partition: 0
+- Offset: 0
+- Snowflake rows before ingestion: 112
+- Snowflake rows after ingestion: 113
+- Valid events: 1
+- Rejected events: 0
+- Result: PASS
+
+### Duplicate Reprocessing
+
+- Reset the isolated test topic offset to 0.
+- Reprocessed the same Kafka message.
+- Snowflake total rows remained 113.
+- Specific event row count remained 1.
+- MERGE-based duplicate prevention: PASS.
+
+### Historical Duplicate Cleanup
+
+- Topic: atmosync_ingestion_test_20261122
+- Partition: 0
+- Offset: 0
+- Duplicate groups: 1
+- Excess rows: 1
+- Both records have identical event IDs and payload hashes.
+- Proposed cleanup: retain earliest record and remove
+  the later duplicate.
+- Status: Awaiting team lead approval.
+- No records have been deleted.
+
+### Spoilage Assumptions Requiring Approval
+
+- Initial shelf life: minimum reference shelf life.
+- Aging factor: 2^(temperature excess / 10).
+- Temperature excess: max(actual temperature -
+  recommended maximum temperature, 0).
+- Maximum valid telemetry interval: 15 seconds.
+- Longer gaps: recorded as unknown exposure.
+- NORMAL: remaining shelf life above 50%.
+- WARNING: above 25% and up to 50%.
+- HIGH_RISK: 25% or below.
+- Proposed temperature alerts: 5 and 30 minutes.
+- Proposed humidity alerts: 15 and 60 minutes.
+
+These assumptions are provisional and require approval.
+Temperature and humidity excursion alerts are not yet
+implemented.
