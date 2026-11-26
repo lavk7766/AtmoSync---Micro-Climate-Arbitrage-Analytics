@@ -230,7 +230,7 @@ def test_current_snowflake_mart_rows_are_blocked(
 
     assert result.status == "INSUFFICIENT_DATA"
     assert result.decision is None
-    
+
 def test_assessment_container_mismatch_blocks_evaluation():
     assessment = make_assessment(
         container_id="CONT002",
