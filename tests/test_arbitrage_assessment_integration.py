@@ -167,18 +167,40 @@ def test_unknown_exposure_blocks_arbitrage_calculation():
     assert result.decision is None
 
 
-def test_incomplete_current_mart_assessment_is_blocked():
-    assessment = make_assessment()
+@pytest.mark.parametrize(
+    ("container_id", "reading_count"),
+    [
+        ("TEST_MISSING_HUM_001", 4),
+        ("TEST_MISSING_TEMP_001", 3),
+    ],
+)
+def test_current_snowflake_mart_rows_are_blocked(
+    container_id,
+    reading_count,
+):
+    # Represents the existing Snowflake mart schema.
+    # Values isolate the schema-compatibility check.
+    current_mart_row = {
+        "container_id": container_id,
+        "product_name": "Apple",
+        "latest_temperature_c": 3.0,
+        "latest_humidity_pct": 90.0,
+        "initial_shelf_life_hours": 720.0,
+        "cumulative_aged_hours": 0.004167,
+        "remaining_shelf_life_hours": 719.995833,
+        "remaining_shelf_life_pct": 99.9994,
+        "risk_level": "NORMAL",
+        "unknown_exposure_hours": 0.0,
+        "reading_count": reading_count,
+        "data_quality_status": "OBSERVED",
+        "latitude": 28.61393,
+        "longitude": 77.20877,
+        "last_reading_at": "2026-11-26T09:50:00Z",
+        "is_assumption_based": True,
+    }
 
-    # Simulate the current mart contract, which lacks the proposed fields.
     assessment = validate_spoilage_assessment(
-        {
-            field: value
-            for field, value in {
-                "container_id": "CONT001",
-                "product_name": "Apple",
-            }.items()
-        },
+        current_mart_row,
         evaluation_time_utc=EVALUATION_TIME,
         max_sensor_age_hours=1,
         max_assessment_age_hours=2,
@@ -186,12 +208,29 @@ def test_incomplete_current_mart_assessment_is_blocked():
         valid_products=PRODUCTS,
     )
 
+    assert assessment.status == "INSUFFICIENT_DATA"
+
+    required_missing_fields = [
+        "source_reading_count",
+        "missing_temperature_reading_count",
+        "missing_humidity_reading_count",
+        "missing_temperature_interval_count",
+        "missing_temperature_interval_hours",
+        "sensor_data_sufficient",
+        "assessment_updated_at",
+    ]
+
+    for field in required_missing_fields:
+        assert (
+            f"MISSING_REQUIRED_FIELD:{field}"
+            in assessment.reason_codes
+        )
+
     result = run_integration(assessment)
 
     assert result.status == "INSUFFICIENT_DATA"
     assert result.decision is None
-
-
+    
 def test_assessment_container_mismatch_blocks_evaluation():
     assessment = make_assessment(
         container_id="CONT002",
